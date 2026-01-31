@@ -1,0 +1,10 @@
+.env
+.env.*
+api-key.txt
+__pycache__/
+*.pyc
+.DS_Store
+
+.env
+.env.*
+
