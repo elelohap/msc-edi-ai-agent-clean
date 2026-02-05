@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from rag.router import router
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 

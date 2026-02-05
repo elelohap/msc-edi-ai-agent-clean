@@ -1,10 +1,20 @@
-.env
-.env.*
-api-key.txt
+@"
+# Python
 __pycache__/
 *.pyc
-.DS_Store
+*.pyo
+*.pyd
 
+# Virtual env
+venv/
+.venv/
+
+# Env files
 .env
 .env.*
 
+# OS / editor
+.DS_Store
+Thumbs.db
+~$*.docx
+"@ | Out-File -Append -Encoding utf8 .gitignore
