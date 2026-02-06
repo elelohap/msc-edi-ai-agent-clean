@@ -10,6 +10,8 @@ import faiss
 import numpy as np
 from openai import OpenAI
 
+MIN_SCORE = float(os.getenv("MIN_SIMILARITY", "0.2"))
+
 _BASE = Path(__file__).resolve().parent
 DOCS_PATH = Path(os.getenv("DOCS_PATH", str(_BASE / "docs.pkl")))
 FAISS_PATH = Path(os.getenv("FAISS_PATH", str(_BASE / "faiss.index")))
@@ -50,6 +52,7 @@ def _to_text(doc: Any) -> str:
 
 def _embed_query(text: str) -> np.ndarray:
     # OpenAI Embeddings API :contentReference[oaicite:2]{index=2}
+    text = text[:4000]  # safety cap
     resp = _client.embeddings.create(
         model=EMBED_MODEL,
         input=text
@@ -59,7 +62,7 @@ def _embed_query(text: str) -> np.ndarray:
     faiss.normalize_L2(vec.reshape(1, -1))
     return vec
 
-def retrieve_context(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+def retrieve_context(query: str, top_k: int = 8) -> List[Dict[str, Any]]:
     _load_resources()
     assert _docs is not None and _index is not None
 
@@ -68,7 +71,7 @@ def retrieve_context(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
 
     results: List[Dict[str, Any]] = []
     for score, idx in zip(scores[0], idxs[0]):
-        if idx < 0:
+        if idx < 0 or score < MIN_SCORE:
             continue
         doc = _docs[int(idx)]
         results.append({"text": _to_text(doc), "score": float(score)})
