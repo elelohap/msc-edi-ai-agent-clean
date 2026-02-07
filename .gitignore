@@ -1,20 +1,47 @@
-@"
+# =========================
 # Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
-*.pyd
 
-# Virtual env
+# =========================
+# Virtual environments
+# =========================
 venv/
 .venv/
+env/
 
-# Env files
+# =========================
+# Environment variables / secrets
+# =========================
 .env
 .env.*
 
-# OS / editor
+# =========================
+# OS / editor junk
+# =========================
 .DS_Store
 Thumbs.db
-~$*.docx
-"@ | Out-File -Append -Encoding utf8 .gitignore
+*.swp
+*.bak
+*.tmp
+~WRL*.tmp
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Non-production documents
+# =========================
+*.docx
+*.pdf
+
+# =========================
+# Experimental / scratch data
+# =========================
+data_hold/
+data_admissions/
