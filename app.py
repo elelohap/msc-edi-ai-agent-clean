@@ -20,8 +20,11 @@ app = FastAPI(
 )
 
 ALLOWED_ORIGINS = [
+    "https://elelohap.github.io",
     "https://your-edi-site-domain.com",
     "https://www.your-edi-site-domain.com",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080",
 ]
 
 app.add_middleware(
