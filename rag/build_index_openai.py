@@ -23,8 +23,8 @@ BASE = Path(__file__).resolve().parent
 ROOT = BASE.parent
 # DATA_DIR = ROOT / "data"
 DATA_DIR = Path(os.getenv("DATA_DIR", str(ROOT / "data")))
-DOCS_PATH = BASE / "docs.pkl"
-FAISS_PATH = BASE / "faiss.index"
+DOCS_PATH = ROOT / "docs.pkl"
+FAISS_PATH = ROOT / "faiss.index"
 
 client = OpenAI()
 
