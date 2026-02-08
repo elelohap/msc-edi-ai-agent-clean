@@ -25,13 +25,13 @@
   const style = document.createElement("style");
   style.textContent = `
   #edi-chat-root{
-    position:fixed;right:18px;bottom:18px;z-index:99999;
+    position:fixed;right:18px;bottom:10px;z-index:99999;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial
   }
   #edi-chat-btn{
-    width:56px;height:56px;border-radius:28px;border:0;cursor:pointer;
+    width:52px;height:52px;border-radius:26px;border:0;cursor:pointer;
     box-shadow:0 10px 25px rgba(0,0,0,.18);
-    font-size:22px;background:#111;color:#fff
+    font-size:20px;background:#111;color:#fff
   }
 
   /* Panel becomes a flex column so everything stacks under the title */
@@ -39,13 +39,13 @@
     position:fixed;
     left:12px;
     right:12px;
-    bottom:86px;
+    bottom:72px;
 
     width:auto;                 /* override old fixed width */
     max-width:none;
 
-    height:70vh;                /* or 520px if you prefer */
-    max-height:100vh;
+    height:82vh;                /* or 520px if you prefer */
+    max-height:88vh;
 
     background:#fff;border-radius:14px;
     box-shadow:0 18px 45px rgba(0,0,0,.25);
@@ -107,12 +107,10 @@
   /* Hint + meta sit above the footer and do not steal body height */
   #edi-chat-hint{
     flex:0 0 auto;
-    padding:0 12px 6px;color:#666;font-size:11px
+    padding:0 12px 4px;color:#666;font-size:10px;
   }
-  #edi-chat-meta{
-    flex:0 0 auto;
-    padding:0 12px 10px;color:#888;font-size:10px
-  }
+  #edi-chat-meta{display:none;}
+    
 
   /* Footer pinned at bottom */
   #edi-chat-footer{
@@ -124,6 +122,16 @@
     flex:1;border:1px solid #ddd;border-radius:10px;
     padding:10px;font-size:13px
   }
+
+  @media (max-width: 520px){
+    #edi-chat-panel{
+      left:8px; right:8px;
+      bottom:68px;
+     height:88vh;
+      max-height:92vh;
+    }
+  }
+
   #edi-chat-send{
     border:0;border-radius:10px;padding:10px 12px;cursor:pointer;
     background:#111;color:#fff
