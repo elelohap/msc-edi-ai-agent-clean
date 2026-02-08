@@ -45,7 +45,7 @@
     max-width:none;
 
     height:70vh;                /* or 520px if you prefer */
-    max-height:80vh;
+    max-height:100vh;
 
     background:#fff;border-radius:14px;
     box-shadow:0 18px 45px rgba(0,0,0,.25);
