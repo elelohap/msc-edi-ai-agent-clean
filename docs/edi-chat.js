@@ -19,19 +19,33 @@
       "I am an engineer. Am I suitable for EDI?",
     ];
 
+  const ACCENT =
+    window.EDI_CHAT_ACCENT || "#0b5fff";
+
+
   /* ============================
      Styles
      ============================ */
+  document.documentElement.style.setProperty("--edi-accent", ACCENT);
+
   const style = document.createElement("style");
   style.textContent = `
+  :root{
+    --edi-accent:#0b5fff;   /* change this to any color you want */
+    --edi-accent-ink:#ffffff;
+    --edi-soft:#eef4ff;
+  }
+
   #edi-chat-root{
     position:fixed;right:18px;bottom:10px;z-index:99999;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial
   }
   #edi-chat-btn{
-    width:52px;height:52px;border-radius:26px;border:0;cursor:pointer;
+    width:56px;height:56px;border-radius:28px;border:0;cursor:pointer;
     box-shadow:0 10px 25px rgba(0,0,0,.18);
-    font-size:20px;background:#111;color:#fff
+    font-size:22px;
+    background:var(--edi-accent);
+    color:var(--edi-accent-ink);
   }
 
   
@@ -61,7 +75,7 @@
   #edi-chat-header{
     flex:0 0 auto;
     padding:12px;border-bottom:1px solid #eee;
-    display:flex;align-items:center;justify-content:space-between
+    display:flex;align-items:center;justify-content:space-between; background:var(--edi-soft);
   }
   #edi-chat-title{font-weight:700;font-size:16px;letter-spacing:0.2px;text-transform:none;}
   #edi-chat-close{border:0;background:transparent;font-size:20px;cursor:pointer;line-height:1}
@@ -76,12 +90,20 @@
     max-height:120px;
     overflow:auto;
   }
+  
+
   .edi-chip{
-    border:1px solid #ddd;border-radius:999px;
-    padding:6px 10px;font-size:11px;
-    cursor:pointer;background:#fafafa
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:999px;
+    padding:6px 10px;
+    font-size:11px;
+    cursor:pointer;
+    background:#fff;
   }
-  .edi-chip:hover{background:#f0f0f0}
+  .edi-chip:hover{
+    background:var(--edi-soft);
+    border-color:rgba(0,0,0,.18);
+  }
 
   /* Body fills the remaining space */
   #edi-chat-body{
@@ -99,7 +121,8 @@
     font-size:13px;line-height:1.35;
     white-space:pre-wrap
   }
-  .edi-msg.user .edi-bubble{background:#111;color:#fff;border-top-right-radius:4px}
+  .edi-msg.user .edi-bubble{background:var(--edi-accent);color:var(--edi-accent-ink);
+     border-top-right-radius:4px}
   .edi-msg.bot .edi-bubble{background:#f4f4f5;color:#111;border-top-left-radius:4px}
 
   .edi-tools{margin-top:4px;text-align:right;font-size:11px}
@@ -135,7 +158,7 @@
 
   #edi-chat-send{
     border:0;border-radius:10px;padding:10px 12px;cursor:pointer;
-    background:#111;color:#fff
+    background:var(--edi-accent);color:var(--edi-accent-ink);
   }
   #edi-chat-send[disabled]{opacity:.5;cursor:not-allowed}
   `;
