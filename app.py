@@ -21,7 +21,7 @@ app = FastAPI(
 
 ALLOWED_ORIGINS = [
     "https://elelohap.github.io",
-    "https://your-edi-site-domain.com",
+    "https://cde.nus.edu.sg",
     "https://www.your-edi-site-domain.com",
     "http://127.0.0.1:8080",
     "http://localhost:8080",
@@ -30,9 +30,9 @@ ALLOWED_ORIGINS = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Register the router
