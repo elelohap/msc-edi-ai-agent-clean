@@ -2,13 +2,16 @@ from fastapi import FastAPI
 from rag.router import router
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from fastapi.responses import JSONResponse
+
+
 load_dotenv()
 
 from fastapi.middleware.cors import CORSMiddleware
-
-
-
-# app = FastAPI()
 
 
 app = FastAPI(
@@ -18,6 +21,11 @@ app = FastAPI(
         "persistAuthorization": True,
     }
 )
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
+
 
 ALLOWED_ORIGINS = [
     "https://elelohap.github.io",
@@ -37,6 +45,14 @@ app.add_middleware(
 
 # Register the router
 app.include_router(router)
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request, exc):
+    return JSONResponse(
+        status_code=429,
+        content={"error": "Too many requests. Please try again in a minute."},
+    )
+
 
 @app.get("/")
 def root():
