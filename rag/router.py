@@ -54,7 +54,9 @@ def normalize_inline_numbered_lists(text: str) -> str:
 # -----------------------------
 
 @router.post("/ask")
-async def ask(request: Request):
+#@app.post("/ask")
+#@limiter.limit("10/minute")
+async def ask(request: Request, payload:AskRequest):
     payload = await request.json()
     q = (payload.get("question") or payload.get("query") or "").strip()
 
