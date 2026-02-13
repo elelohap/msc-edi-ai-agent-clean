@@ -17,6 +17,8 @@
       "Do I need a visa to study at NUS?",
       "What is the GPA requirement to graduate?",
       "I am an engineer. Am I suitable for EDI?",
+      "I have a design background. Am I suitable for EDI?",
+      "I have a degree in Business and Management. Am I suitable for EDI?",
     ];
 
   const ACCENT =
@@ -302,5 +304,5 @@
   };
 
   renderSuggestions();
-  addMsg("bot", "Hi! Ask me about admissions, courses, or graduation requirements for MSc EDI.");
+  addMsg("bot", "Hi! You can ask me about admissions, courses, or graduation requirements for MSc EDI.");
 })();
