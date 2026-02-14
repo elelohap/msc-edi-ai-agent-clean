@@ -54,14 +54,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def real_ip(request: Request) -> str:
-    xff = request.headers.get("x-forwarded-for")
-    if xff:
-        return xff.split(",")[0].strip()
-    return request.client.host
+#def real_ip(request: Request) -> str:
+#    xff = request.headers.get("x-forwarded-for")
+#    if xff:
+#        return xff.split(",")[0].strip()
+#    return request.client.host
 
-limiter = Limiter(key_func=real_ip)
-app.state.limiter = limiter
+#limiter = Limiter(key_func=real_ip)
+#app.state.limiter = limiter
 
 
 # Register the router
