@@ -5,7 +5,7 @@ from rag.llm import ask_llm
 from rag.retriever import retrieve_context
 from rag.formatting.markdown import format_markdown_safe
 from rag.limits import limiter
-frin rag.limits import real_ip
+from rag.limits import real_ip
 
 
 from rag.routing.policy import (
