@@ -5,6 +5,7 @@ from rag.llm import ask_llm
 from rag.retriever import retrieve_context
 from rag.formatting.markdown import format_markdown_safe
 from rag.limits import limiter
+frin rag.limits import real_ip
 
 
 from rag.routing.policy import (
@@ -18,6 +19,8 @@ from rag.routing.policy import (
 import re
 
 router = APIRouter()
+
+print("ROUTER LOADED", flush=True)
 
 
 # -----------------------------
@@ -63,6 +66,10 @@ async def ask(request: Request):
 
     if not q:
         return JSONResponse({"answer": pick_rag_fallback("")})
+
+    ip = real_ip(request)
+    print(f"[ASK] ip={ip} q={q}")
+
 
     # Retrieve once; reuse everywhere
     context_chunks = retrieve_context(q, top_k=10)
