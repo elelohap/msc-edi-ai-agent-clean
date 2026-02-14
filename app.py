@@ -5,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from fastapi.responses import JSONResponse
 
-#from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
@@ -28,17 +27,16 @@ app = FastAPI(
     }
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
+
 # Use proxy-aware IP detection
 def real_ip(request: Request) -> str:
     xff = request.headers.get("x-forwarded-for")
     if xff:
         return xff.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
-
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.add_middleware(SlowAPIMiddleware)
-
 
 ALLOWED_ORIGINS = [
     "https://elelohap.github.io",
