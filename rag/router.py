@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 from rag.llm import ask_llm
 from rag.retriever import retrieve_context
 from rag.formatting.markdown import format_markdown_safe
+from rag.limits import limiter
+
 
 from rag.routing.policy import (
     route_early,
@@ -54,8 +56,7 @@ def normalize_inline_numbered_lists(text: str) -> str:
 # -----------------------------
 
 @router.post("/ask")
-#@app.post("/ask")
-#@limiter.limit("10/minute")
+@limiter.limit("10/minute")
 async def ask(request: Request):
     payload = await request.json()
     q = (payload.get("question") or payload.get("query") or "").strip()

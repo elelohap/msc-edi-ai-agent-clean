@@ -3,14 +3,16 @@ from fastapi import Request
 from rag.router import router
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from fastapi.responses import JSONResponse
 
-from slowapi import Limiter
+#from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 from slowapi import _rate_limit_exceeded_handler
 
-from fastapi.responses import JSONResponse
+
+from rag.limits import limiter
 
 
 load_dotenv()
@@ -33,14 +35,10 @@ def real_ip(request: Request) -> str:
         return xff.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
 
-limiter = Limiter(
-    key_func=real_ip,
-    default_limits=["10/minute"]   # 👈 GLOBAL LIMIT
-)
-
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+
 
 ALLOWED_ORIGINS = [
     "https://elelohap.github.io",
