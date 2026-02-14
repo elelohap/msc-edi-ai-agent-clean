@@ -68,7 +68,7 @@ async def ask(request: Request):
         return JSONResponse({"answer": pick_rag_fallback("")})
 
     ip = real_ip(request)
-    print(f"[ASK] ip={ip} q={q}")
+    print(f"[ASK] ip={ip} q={q}", flush=True)
 
 
     # Retrieve once; reuse everywhere
