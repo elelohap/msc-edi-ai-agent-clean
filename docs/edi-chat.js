@@ -271,11 +271,19 @@
       const data = await res.json().catch(() => ({}));
       if (typing.parentNode) body.removeChild(typing);
 
+      
+
       if (!res.ok) {
-        addMsg("bot", data?.error || `HTTP ${res.status}`);
-      } else {
-        addMsg("bot", data?.answer || "No answer returned.", true);
+          if (res.status === 429) {
+             addMsg("bot", "You’re sending questions too quickly. Please wait ~1 minute and try again.");
+          } else {
+            addMsg("bot", data?.error || `Request failed (HTTP ${res.status}).`);
+          }
+          return;
       }
+
+
+
     } catch (e) {
       if (typing.parentNode) body.removeChild(typing);
       addMsg("bot", "Network error. Please try again.");
