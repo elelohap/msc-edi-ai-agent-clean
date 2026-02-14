@@ -268,20 +268,26 @@
         body: JSON.stringify({ question }),
       });
 
+      // ✅ Handle 429 first, no matter what the body looks like
+      if (res.status === 429) {
+          if (typing.parentNode) body.removeChild(typing);
+          addMsg("bot", "You’re sending questions too quickly. Please wait ~1 minute and try again.");
+          return;
+      }
+
+
       const data = await res.json().catch(() => ({}));
       if (typing.parentNode) body.removeChild(typing);
 
       
-
       if (!res.ok) {
           if (res.status === 429) {
-             addMsg("bot", "You’re sending questions too quickly. Please wait ~1 minute and try again.");
+             addMsg("bot", "You’re sending questions too quickly. Please wait 1 minute and try again.");
           } else {
             addMsg("bot", data?.error || `Request failed (HTTP ${res.status}).`);
           }
           return;
       }
-
 
 
     } catch (e) {
