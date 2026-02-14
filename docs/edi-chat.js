@@ -279,15 +279,23 @@
       const data = await res.json().catch(() => ({}));
       if (typing.parentNode) body.removeChild(typing);
 
-      
       if (!res.ok) {
-          if (res.status === 429) {
-             addMsg("bot", "You’re sending questions too quickly. Please wait 1 minute and try again.");
-          } else {
-            addMsg("bot", data?.error || `Request failed (HTTP ${res.status}).`);
-          }
-          return;
+         if (res.status === 429) {
+            addMsg("bot", "You’re sending questions too quickly. Please wait ~1 minute and try again.");
+         } else {
+           addMsg("bot", data?.error || `Request failed (HTTP ${res.status}).`);
+         }
+         return;
       }
+
+// ✅ SUCCESS: show the answer
+const answer = data?.answer || data?.response || data?.result;
+if (!answer) {
+  addMsg("bot", "Server returned 200 OK but no answer field was found.");
+  return;
+}
+addMsg("bot", answer, true);
+
 
 
     } catch (e) {
