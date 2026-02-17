@@ -13,6 +13,9 @@ from slowapi import _rate_limit_exceeded_handler
 
 from rag.limits import limiter
 
+import os
+print("DATABASE_URL exists:", bool(os.getenv("DATABASE_URL")), flush=True)
+
 
 load_dotenv()
 
@@ -41,17 +44,16 @@ def real_ip(request: Request) -> str:
 ALLOWED_ORIGINS = [
     "https://elelohap.github.io",
     "https://cde.nus.edu.sg",
-    "https://www.your-edi-site-domain.com",
     "http://127.0.0.1:8080",
     "http://localhost:8080",
-]
+    ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 #def real_ip(request: Request) -> str:
