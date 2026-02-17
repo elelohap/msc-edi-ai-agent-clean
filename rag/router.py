@@ -17,10 +17,49 @@ from rag.routing.policy import (
 )
 
 import re
+import time
+import hashlib
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+print("ROUTER FILE LOADED FROM:", __file__, flush=True)
 
 router = APIRouter()
 
-print("ROUTER LOADED", flush=True)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+def log_to_postgres(
+    *,
+    origin: str | None,
+    session_id: str | None,
+    ip_hash: str,
+    user_agent: str | None,
+    question: str,
+    status: int,
+    latency_ms: int,
+) -> None:
+    if not DATABASE_URL:
+        print("[LOGGING] DATABASE_URL missing; skipping DB log", flush=True)
+        return
+
+    try:
+        with psycopg2.connect(DATABASE_URL) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO chat_logs
+                    (origin, session_id, ip_hash, user_agent, question, status, latency_ms)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
+                    """,
+                    (origin, session_id, ip_hash, user_agent, question, status, latency_ms),
+                )
+    except Exception as e:
+        print(f"[LOGGING ERROR] {e}", flush=True)
+
+
+def get_conn():
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 
 # -----------------------------
@@ -61,6 +100,9 @@ def normalize_inline_numbered_lists(text: str) -> str:
 @router.post("/ask")
 @limiter.limit("10/minute")
 async def ask(request: Request):
+    start_time = time.time()
+    status_code = 200
+
     payload = await request.json()
     q = (payload.get("question") or payload.get("query") or "").strip()
 
@@ -71,29 +113,57 @@ async def ask(request: Request):
     print(f"[ASK] ip={ip} q={q}", flush=True)
 
 
+    t0 = time.time()
+    status_code = 200
+
+    origin = request.headers.get("origin")
+    user_agent = request.headers.get("user-agent")
+    session_id = payload.get("session_id")  # optional; ok if None
+
+    ip = real_ip(request)
+    ip_hash = hashlib.sha256(ip.encode("utf-8")).hexdigest()[:16]
+
+    def respond(answer_text: str, status_code: int=200):
+    latency_ms = int((time.time() - t0) * 1000)
+
+    # TEMP DEBUG (remove after first success)
+    print(f"[DBLOG] about to insert ip_hash={ip_hash} status={status_code}", flush=True)
+
+    log_to_postgres(
+        origin=origin,
+        session_id=session_id,
+        ip_hash=ip_hash,
+        user_agent=user_agent,
+        question=q,
+        status=status_code,
+        latency_ms=latency_ms,
+    )
+    return JSONResponse({"answer": answer_text}, status_code=status_code)
+
+
     # Retrieve once; reuse everywhere
     context_chunks = retrieve_context(q, top_k=10)
 
     # 0) Early exits (greetings, thanks, etc.)
     r = route_early(q)
     if r:
-        return JSONResponse({"answer": format_markdown_safe(r)})
+        return respond(format_markdown_safe(r))
 
     r = route_intake(q)
     if r:
-        return JSONResponse({"answer": format_markdown_safe(r)})
+        return respond(format_markdown_safe(r))
 
     # 1) Policy / logistics (visa, immigration, Student’s Pass) — HARD STOP
     r = route_policy_logistics(q, context_chunks)
     if r:
-        return JSONResponse({"answer": format_markdown_safe(r)})
+        return respond(format_markdown_safe(r))
 
     # 2) Requirement vs suitability
     rs = route_requirement_or_suitability(q, context_chunks)
     if rs:
         kind, payload = rs
         if kind == "direct" and not is_suitability_question(q):
-            return JSONResponse({"answer": format_markdown_safe(payload)})
+            return respond(format_markdown_safe(payload))
 
     # 3) LLM (always used for suitability questions)
     answer = ask_llm(q, context_chunks)
@@ -107,4 +177,48 @@ async def ask(request: Request):
     if not answer.strip():
         answer = pick_rag_fallback(q)
 
-    return JSONResponse({"answer": answer})
+   
+    latency_ms = int((time.time() - start_time) * 1000)
+
+    # Privacy-safe IP hashing
+    raw_ip = real_ip(request)
+    ip_hash = hashlib.sha256(raw_ip.encode()).hexdigest()[:16]
+
+    origin = request.headers.get("origin")
+    user_agent = request.headers.get("user-agent")
+    session_id = payload.get("session_id")
+
+    try:
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO chat_logs
+                    (origin, session_id, ip_hash, user_agent, question, status, latency_ms)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
+                """, (
+                    origin,
+                    session_id,
+                    ip_hash,
+                    user_agent,
+                    q,
+                    status_code,
+                    latency_ms
+                ))
+   except Exception as e:
+        print(f"[LOGGING ERROR] {e}", flush=True)
+
+   latency_ms = int((time.time() - t0) * 1000)
+   log_to_postgres(
+       origin=origin,
+       session_id=session_id,
+       ip_hash=ip_hash,
+       user_agent=user_agent,
+       question=q,
+       status=status_code,
+       latency_ms=latency_ms,
+   )
+
+
+   return respond(answer)
+
+

@@ -22,8 +22,6 @@ The application period varies slightly from year to year. For the August intake,
 Can I apply to more than one MSc programme at NUS?
 Yes, applicants can apply to as many MSc programmes as they wish but they have to pay a separate application fee for each programme. 
 
-What is meant by “preference level” when applying for an MSc programme at NUS?
-If applicants apply to more than one MSc programme, they will be asked to declare their order of preference. If a preference is not declared, then the Graduate Admissions System will default to the order in which the MSc programmes were applied to. This preference may be considered during the evaluation process.
 
 English language proficiency for admission
 Do I need to submit an English proficiency result?
@@ -134,7 +132,7 @@ What happens if one of my desired electives is scheduled at the same time as a c
 The core courses are only offered once per year. As such, core courses would take precedent over elective courses if there is a schedule conflict. All efforts are made to minimise the number of schedule conflicts between core and elective courses but clashes may occasionally occur.
 
 Does the MSc in Engineering Design & Innovation require attendance during the Special Term?
-There are currently no core courses offered during the Special Term. Students are free to use the Special Term to work on their major design project (for EG5303), take up internships, or pursue personal interests. 
+There are currently no core courses offered during the Special Term. Students are free to use the Special Term to work on their interdisciplinary design project CDE5301, take up internships, or pursue personal interests. 
 
 Are courses offered during the Special Term?
 No core or elective courses are currently offered during the Special Term.

@@ -1,34 +1,39 @@
-Write-Host "Rebuilding RAG index..."
-python build_index.py
+$ErrorActionPreference = "Stop"
+
+Write-Host "Rebuilding FAISS index..."
+
+# Step 1: Run index builder
+python rag/build_index_openai.py
+
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "Index build failed. Aborting."
+    Write-Host "Index build failed."
     exit 1
 }
 
-if (!(Test-Path "faiss.index") -or !(Test-Path "docs.pkl")) {
-    Write-Error "faiss.index or docs.pkl not found. Aborting."
+# Step 2: Verify artefacts exist in repo root
+if (!(Test-Path "docs.pkl")) {
+    Write-Host "docs.pkl not found in repo root."
     exit 1
 }
 
-Write-Host ""
-Write-Host "Git status:"
-git status --short
-
-Write-Host ""
-$confirm = Read-Host "Commit updated index files? (y/n)"
-if ($confirm -ne "y") {
-    Write-Host "Commit cancelled."
-    exit 0
+if (!(Test-Path "faiss.index")) {
+    Write-Host "faiss.index not found in repo root."
+    exit 1
 }
 
-git add faiss.index docs.pkl
-git commit -m "Update RAG index (faiss.index, docs.pkl)"
+Write-Host "Index artefacts generated successfully."
 
-Write-Host ""
-$pushConfirm = Read-Host "Push to remote (triggers Render deploy)? (y/n)"
-if ($pushConfirm -eq "y") {
-    git push
-    Write-Host "Pushed. Render will redeploy automatically."
+# Step 3: Stage artefacts
+git add docs.pkl faiss.index
+
+# Step 4: Commit only if there are changes
+$changes = git status --porcelain
+
+if ($changes) {
+    git commit -m "Rebuild FAISS index after updating knowledge sources"
+    Write-Host "Index committed locally."
 } else {
-    Write-Host "Commit created locally. Remember to push when ready."
+    Write-Host "No index changes detected. Nothing to commit."
 }
+
+Write-Host "If ready, run: git push"

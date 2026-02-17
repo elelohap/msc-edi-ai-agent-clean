@@ -8,3 +8,5 @@ faiss-cpu
 # transformers
 numpy
 slowapi
+psycopg2-binary
+

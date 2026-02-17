@@ -10,20 +10,18 @@ This MSc programme is offered on a full-time basis only and should be completed 
 Core Courses
 These courses provide an introduction to key topics in engineering design and innovation. It includes a major, year-long interdisciplinary project in which students are required to work in a team to define a problem to address and create a proof-of-concept prototype of a solution to the problem.
 
-Course code	Course title	Units	Semester in which course is usually offered
-CDE5301 *	Interdisciplinary Design Project	12	August and January
-CDE5302	Design Thinking and Product Development	4	August
-CDE5303	Engineering Systems Design	4	January
-CDE5304 ^	Ideas to Market	4	January
-CDE5313 ^	Innovation by Design	4	August and January
-Notes:
+Core Courses are as follows :
+CDE5301 Interdisciplinary Design Project
+CDE5302 Design Thinking and Product Development
+CDE5303 Engineering Systems Design
+CDE5304 Ideas to Market or CDE5313 Innovation by Design
 
-* This course runs over two consecutive semesters.
+Elective courses offered by EDIC :
+CDE5311 Designing UX/UI for Human-Centred AI
+CDE5312 Beyond the Surface: Exploring Interactive Wearables
+Other electives from the Design, Enterprise and Technology are offered by other departments
 
-^ One of these courses must be read as a core, while the other can be read as an elective if desired.
-
- 
-
+Description of core courses :
 CDE5301 Interdisciplinary Design Project
 In this year-long, project-based course, students will work in multidisciplinary teams comprising members from engineering, design, and related fields to tackle complex, real-world challenges grounded in human experience. They will explore how individuals, communities, and organisations encounter problems in their everyday lives, and how thoughtful, well-tested solutions can make a genuine difference. This course is more than a project: it is a journey through the messy, meaningful process of interdisciplinary design innovation. Along the way, students will build the skills, mindset, and confidence to collaborate across disciplines and deliver solutions that are as thoughtful as they are tangible.
 
