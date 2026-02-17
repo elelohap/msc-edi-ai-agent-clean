@@ -109,7 +109,7 @@ async def ask(request: Request):
         latency_ms = int((time.time() - t0) * 1000)
 
         # TEMP DEBUG: remove after first successful row appears
-        print(f"[DBLOG] inserting ip_hash={ip_hash} status={status_code}", flush=True)
+        # print(f"[DBLOG] inserting ip_hash={ip_hash} status={status_code}", flush=True)
 
         log_to_postgres(
             origin=origin,
