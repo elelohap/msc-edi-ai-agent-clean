@@ -24,6 +24,19 @@
   const ACCENT =
     window.EDI_CHAT_ACCENT || "#0b5fff";
 
+   /* ============================
+   Session ID (anonymous)
+   ============================ */
+   const SESSION_KEY = "edi_chat_session_id";
+
+   let SESSION_ID = localStorage.getItem(SESSION_KEY);
+
+   if (!SESSION_ID) {
+     SESSION_ID = crypto.randomUUID();
+     localStorage.setItem(SESSION_KEY, SESSION_ID);
+   }
+
+
 
   /* ============================
      Styles
@@ -265,7 +278,9 @@
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+           question,
+           session_id:SESSION_ID}),
       });
 
       // ✅ Handle 429 first, no matter what the body looks like
