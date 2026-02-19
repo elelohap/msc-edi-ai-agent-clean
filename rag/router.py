@@ -134,22 +134,30 @@ async def ask(request: Request):
 
 
     # 0) Early exits
+    print("[FLOW] checking route_early", flush=True)
     r = route_early(q)
     if r:
+        print("[FLOW] route_early triggered", flush=True)
         return respond(format_markdown_safe(r))
-
+    
+    print("[FLOW] checking route_intake", flush=True)
     r = route_intake(q)
     if r:
+        print("[FLOW] route_intake triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 1) Policy/logistics hard stop
+    print("[FLOW] checking route_policy_logistics", flush=True)
     r = route_policy_logistics(q, context_chunks)
     if r:
+        print("[FLOW] route_policy_logistics triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 2) Requirement vs suitability
+    print("[FLOW] checking route_requirement", flush=True)
     rs = route_requirement_or_suitability(q, context_chunks)
     if rs:
+        print("[FLOW] route_requirement", flush=True)
         kind, payload2 = rs
         if kind == "direct" and not is_suitability_question(q):
             return respond(format_markdown_safe(payload2))
