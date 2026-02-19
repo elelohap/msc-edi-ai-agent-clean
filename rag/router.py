@@ -22,7 +22,7 @@ from typing import Optional
 
 import psycopg2
 
-print("ROUTER FILE LOADED FROM:", __file__, flush=True)
+# print("ROUTER FILE LOADED FROM:", __file__, flush=True)
 
 router = APIRouter()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -130,6 +130,9 @@ async def ask(request: Request):
     # Retrieve once; reuse everywhere
     context_chunks = retrieve_context(q, top_k=10)
 
+    print(f"[RAG] chunks={len(context_chunks)}", flush=True)
+
+
     # 0) Early exits
     r = route_early(q)
     if r:
@@ -154,6 +157,9 @@ async def ask(request: Request):
     # 3) LLM
     answer = ask_llm(q, context_chunks)
     answer = normalize_inline_numbered_lists(answer)
+
+    print(f"[LLM] answer_len={len(answer or '')}", flush=True)
+
 
     # 4) Suitability fallback only if LLM failed
     if is_suitability_question(q) and not answer.strip():
