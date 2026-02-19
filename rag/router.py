@@ -130,34 +130,34 @@ async def ask(request: Request):
     # Retrieve once; reuse everywhere
     context_chunks = retrieve_context(q, top_k=10)
 
-    print(f"[RAG] chunks={len(context_chunks)}", flush=True)
+    # print(f"[RAG] chunks={len(context_chunks)}", flush=True)
 
 
     # 0) Early exits
-    print("[FLOW] checking route_early", flush=True)
+    # print("[FLOW] checking route_early", flush=True)
     r = route_early(q)
     if r:
-        print("[FLOW] route_early triggered", flush=True)
+        # print("[FLOW] route_early triggered", flush=True)
         return respond(format_markdown_safe(r))
     
-    print("[FLOW] checking route_intake", flush=True)
+    # print("[FLOW] checking route_intake", flush=True)
     r = route_intake(q)
     if r:
-        print("[FLOW] route_intake triggered", flush=True)
+        # print("[FLOW] route_intake triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 1) Policy/logistics hard stop
-    print("[FLOW] checking route_policy_logistics", flush=True)
+    # print("[FLOW] checking route_policy_logistics", flush=True)
     r = route_policy_logistics(q, context_chunks)
     if r:
-        print("[FLOW] route_policy_logistics triggered", flush=True)
+        # print("[FLOW] route_policy_logistics triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 2) Requirement vs suitability
-    print("[FLOW] checking route_requirement", flush=True)
+    # print("[FLOW] checking route_requirement", flush=True)
     rs = route_requirement_or_suitability(q, context_chunks)
     if rs:
-        print("[FLOW] route_requirement", flush=True)
+        # print("[FLOW] route_requirement", flush=True)
         kind, payload2 = rs
         if kind == "direct" and not is_suitability_question(q):
             return respond(format_markdown_safe(payload2))
@@ -166,7 +166,7 @@ async def ask(request: Request):
     answer = ask_llm(q, context_chunks)
     answer = normalize_inline_numbered_lists(answer)
 
-    print(f"[LLM] answer_len={len(answer or '')}", flush=True)
+    # print(f"[LLM] answer_len={len(answer or '')}", flush=True)
 
 
     # 4) Suitability fallback only if LLM failed
