@@ -130,6 +130,14 @@ async def ask(request: Request):
     # Retrieve once; reuse everywhere
     context_chunks = retrieve_context(q, top_k=10)
 
+    # just for debugging and learning
+    print("[RAG] top chunks preview:", flush=True)
+    for i, c in enumerate(context_chunks[:3]):
+        preview = (c.get("text","") if isinstance(c, dict) else str(c))[:120].replace("\n"," ")
+        print(f"  - {i+1}: {preview}...", flush=True)
+
+
+
     # print(f"[RAG] chunks={len(context_chunks)}", flush=True)
 
 
