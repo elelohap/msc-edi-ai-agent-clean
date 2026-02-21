@@ -84,7 +84,7 @@ INLINE CONTINUATION RULE (NON-NEGOTIABLE):
 - No text is allowed on the same line as a section heading.
 """
 
-
+# converts chunk into plain text
 def _chunk_to_text(chunk: Dict[str, Any]) -> str:
     """
     Keep compatibility with multiple chunk shapes.
@@ -132,16 +132,25 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
             parts.append(t.strip())
 
     context_text = "\n\n".join(parts)
+    if not context_text.strip():
+        return "The answer is not in the provided documents."
 
     user_prompt = f"""You must answer in well-formatted Markdown.
+    
+    Rules:
+    - Use ONLY the information in the Context.
+    - If the Context does not contain the answer, say: "The answer is not in the provided documents."
+    - Do not guess and do not add facts not supported by the Context.
 
-Context:
-{context_text}
+    Context:
+    {context_text}
 
-Question:
-{question}
-"""
+    Question:
+    {question}
+    """
 
+# final completion step where LLM synthesizes response to user question
+# temperature parameter below allows control over the balance between strict adherence to retrieved context (low temp) and creative human-like generation (high temp)
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         temperature=0.3,

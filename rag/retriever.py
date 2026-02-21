@@ -51,6 +51,7 @@ def _to_text(doc: Any) -> str:
         return str(doc)
     return str(doc)
 
+# embed the user question into a vector
 def _embed_query(text: str) -> np.ndarray:
     # OpenAI Embeddings API :contentReference[oaicite:2]{index=2}
     text = text[:4000]  # safety cap
@@ -63,12 +64,16 @@ def _embed_query(text: str) -> np.ndarray:
     faiss.normalize_L2(vec.reshape(1, -1))
     return vec
 
+# Finds the top_k closest chunk
 def retrieve_context(query: str, top_k: int = 8) -> List[Dict[str, Any]]:
-    _load_resources()
-    assert _docs is not None and _index is not None
+    _load_resources()    #loads docs.pkl and faiss.index
+    assert _docs is not None and _index is not None   # confirms that the two resources are available, else crash
 
     q = _embed_query(query).reshape(1, -1)
     scores, idxs = _index.search(q, top_k)
+
+    # for debugging
+    print("[RAG] raw scores:", scores[0][:5], flush=True)
 
     results: List[Dict[str, Any]] = []
     for score, idx in zip(scores[0], idxs[0]):
