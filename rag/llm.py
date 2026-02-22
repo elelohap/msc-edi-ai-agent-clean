@@ -52,6 +52,15 @@ PROGRAMME OVERVIEW ANSWERING MODE:
 - You MAY synthesise across multiple provided context sections.
 - You MUST explicitly state when information is not specified in the official information provided.
 
+QUALITATIVE / EXPERIENCE QUESTIONS (exception to fallback rule #2):
+- Some questions are subjective (e.g., "How challenging is EDI?", workload, intensity, time commitment, pace).
+- For these subjective questions, you MAY answer by explaining what the Context implies (e.g., project-based learning, major design project, team work, breadth of modules).
+- You MUST:
+  1) Clearly label your answer as an inference from the Context (e.g., "Based on the provided documents, it appears…").
+  2) Avoid absolute claims ("definitely", "guaranteed") and avoid inventing numbers (hours/week) unless explicitly stated.
+  3) If the Context contains no indicators related to workload/intensity at all, then use the fallback sentence.
+
+
 SUITABILITY AND BACKGROUND QUESTIONS (IMPORTANT):
 - Some questions (e.g. background suitability, prior experience, preparedness) may not be answered by a single explicit sentence in the context.
 - For such questions, you MAY reason by synthesising multiple context statements (e.g. admissions criteria, cohort composition, programme description).
@@ -132,6 +141,9 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
             parts.append(t.strip())
 
     context_text = "\n\n".join(parts)
+
+    print(f"[LLMDBG] context_len={len(context_text)} parts={len(parts)}", flush=True)
+
     if not context_text.strip():
         return "The answer is not in the provided documents."
 
