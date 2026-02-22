@@ -219,8 +219,9 @@ async def ask(request: Request):
     try:
         path = "llm"
         
-        print(f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={context_chunks[0]['text'][:120].replace('\\n',' ')}", flush=True)
-        
+        preview = context_chunks[0]['text'][:120].replace('\n', ' ')
+        print(f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={preview}", flush=True)
+              
         answer = ask_llm(q, context_chunks)
         answer = normalize_inline_numbered_lists(answer)
     except Exception as e:
