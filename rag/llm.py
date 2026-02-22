@@ -56,7 +56,7 @@ QUALITATIVE / EXPERIENCE QUESTIONS (exception to fallback rule #2):
 - Some questions are subjective (e.g., "How challenging is EDI?", workload, intensity, time commitment, pace).
 - For these subjective questions, you MAY answer by explaining what the Context implies (e.g., project-based learning, major design project, team work, breadth of modules).
 - You MUST:
-  1) Clearly label your answer as an inference from the Context.
+  # 1) Clearly label your answer as an inference from the Context.
   2) Avoid absolute claims ("definitely", "guaranteed") and avoid inventing numbers (hours/week) unless explicitly stated.
   3) If the Context contains no indicators related to workload/intensity at all, then use the fallback sentence.
 
