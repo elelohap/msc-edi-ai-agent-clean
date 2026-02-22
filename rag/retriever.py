@@ -1,7 +1,7 @@
 # rag/retriever.py
 from __future__ import annotations
 
-import os
+import os, re
 import pickle
 from pathlib import Path
 from typing import Any, Dict, List
@@ -23,6 +23,16 @@ _docs: List[Any] | None = None
 _index: faiss.Index | None = None
 
 _client = OpenAI()
+
+def _normalize_query_for_retrieval(q: str) -> str:
+    q2 = (q or "").strip()
+
+    # Expand "EDI" to improve retrieval consistency
+    if re.search(r"\bedi\b", q2, flags=re.IGNORECASE):
+        q2 += " MSc Engineering Design and Innovation programme at NUS"
+
+    return q2
+
 
 def _load_resources() -> None:
     global _docs, _index
@@ -68,7 +78,7 @@ def _embed_query(text: str) -> np.ndarray:
 def retrieve_context(query: str, top_k: int = 8) -> List[Dict[str, Any]]:
     _load_resources()    #loads docs.pkl and faiss.index
     assert _docs is not None and _index is not None   # confirms that the two resources are available, else crash
-
+    query = _normalize_query_for_retrieval(query)
     q = _embed_query(query).reshape(1, -1)
     scores, idxs = _index.search(q, top_k)
 
