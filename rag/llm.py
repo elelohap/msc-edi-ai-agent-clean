@@ -56,7 +56,7 @@ QUALITATIVE / EXPERIENCE QUESTIONS (exception to fallback rule #2):
 - Some questions are subjective (e.g., "How challenging is EDI?", workload, intensity, time commitment, pace).
 - For these subjective questions, you MAY answer by explaining what the Context implies (e.g., project-based learning, major design project, team work, breadth of modules).
 - You MUST:
-  # 1) Clearly label your answer as an inference from the Context.
+  1) Clearly label your answer as an inference from the Context.
   2) Avoid absolute claims ("definitely", "guaranteed") and avoid inventing numbers (hours/week) unless explicitly stated.
   3) If the Context contains no indicators related to workload/intensity at all, then use the fallback sentence.
 
@@ -135,10 +135,11 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
     Uses a system message (policy/rules) + user message containing context and question.
     """
     parts: List[str] = []
+    MAX_CHUNK_CHARS = 700
     for c in context_chunks or []:
-        t = _chunk_to_text(c)
+        t = _chunk_to_text(c).strip()
         if t and t.strip():
-            parts.append(t.strip())
+            parts.append(t[:MAX_CHUNK_CHARS])
 
     context_text = "\n\n".join(parts)
 
@@ -166,7 +167,7 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         temperature=0.3,
-        max_tokens=800,
+        max_tokens=500,
         messages=[
             {"role": "system", "content": system_msg},
             {"role": "user", "content": user_prompt},

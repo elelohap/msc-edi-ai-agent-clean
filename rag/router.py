@@ -157,7 +157,7 @@ async def ask(request: Request):
 
     # Retrieve once; reuse everywhere
     try: 
-        context_chunks = retrieve_context(q, top_k=10)
+        context_chunks = retrieve_context(q, top_k=8)
     except Exception as e:
         path = "retrieval_error"
         print(f"[ERROR] stage=retrieval ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
@@ -218,6 +218,9 @@ async def ask(request: Request):
     # 3) LLM
     try:
         path = "llm"
+        
+        print(f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={context_chunks[0]['text'][:120].replace('\\n',' ')}", flush=True)
+        
         answer = ask_llm(q, context_chunks)
         answer = normalize_inline_numbered_lists(answer)
     except Exception as e:
