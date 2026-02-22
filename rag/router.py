@@ -22,6 +22,19 @@ from typing import Optional
 
 import psycopg2
 
+# codes for traceability if anything goes wrong
+def _safe_origin(origin: str | None) -> str:
+    if not origin:
+        return "-"
+    # keep just scheme+host for readability
+    try:
+        from urllib.parse import urlparse
+        u = urlparse(origin)
+        return f"{u.scheme}://{u.netloc}" if u.scheme and u.netloc else origin[:80]
+    except Exception:
+        return origin[:80]
+
+
 # print("ROUTER FILE LOADED FROM:", __file__, flush=True)
 
 router = APIRouter()
@@ -96,6 +109,10 @@ def normalize_inline_numbered_lists(text: str) -> str:
 @limiter.limit("10/minute")
 async def ask(request: Request):
     t0 = time.time()
+    path = "unknown"
+    chunks_count = 0
+    top_score = None
+
     payload = await request.json()
     q = (payload.get("question") or payload.get("query") or "").strip()
 
@@ -107,6 +124,16 @@ async def ask(request: Request):
 
     def respond(answer_text: str, status_code: int = 200):
         latency_ms = int((time.time() - t0) * 1000)
+        origin_short = _safe_origin(origin)
+        # ip_for_log = ip  # or a masked version if you prefer
+
+        print(
+            f"[TRACE] path={path} ip_hash={ip_hash} origin={origin_short} "
+            f"qlen={len(q)} chunks={chunks_count} top={top_score} "
+            f"latency_ms={latency_ms} status={status_code}",
+            flush=True
+        )
+
 
         # TEMP DEBUG: remove after first successful row appears
         # print(f"[DBLOG] inserting ip_hash={ip_hash} status={status_code}", flush=True)
@@ -123,18 +150,32 @@ async def ask(request: Request):
         return JSONResponse({"answer": answer_text}, status_code=status_code)
 
     if not q:
+        path = "empty"
         return respond(pick_rag_fallback(""))
 
     print(f"[ASK] ip={ip} q={q}", flush=True)
 
     # Retrieve once; reuse everywhere
-    context_chunks = retrieve_context(q, top_k=10)
+    try: 
+        context_chunks = retrieve_context(q, top_k=10)
+    except Exception as e:
+        path = "retrieval_error"
+        print(f"[ERROR] stage=retrieval ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
+        return respond("Sorry — retrieval failed. Please try again.", status_code=500)    
 
-    # just for debugging and learning
-    print("[RAG] top chunks preview:", flush=True)
-    for i, c in enumerate(context_chunks[:3]):
-        preview = (c.get("text","") if isinstance(c, dict) else str(c))[:120].replace("\n"," ")
-        print(f"  - {i+1}: {preview}...", flush=True)
+
+    chunks_count = len(context_chunks or [])
+    top_score = (context_chunks[0].get("score") if chunks_count else None)
+
+
+    # just for debugging and learning, if debugging required, set DEBUG_RAG=1 in Render environment variable
+    DEBUG_RAG = os.getenv("DEBUG_RAG", "0") == "1"
+
+    if DEBUG_RAG:
+        print("[RAG] top chunks preview:", flush=True)
+        for i, c in enumerate(context_chunks[:3]):
+            preview = (c.get("text","") if isinstance(c, dict) else str(c))[:120].replace("\n"," ")
+            print(f"  - {i+1}: {preview}...", flush=True)
 
 
 
@@ -142,37 +183,48 @@ async def ask(request: Request):
 
 
     # 0) Early exits
-    # print("[FLOW] checking route_early", flush=True)
+    print("[FLOW] checking route_early", flush=True)
     r = route_early(q)
     if r:
-        # print("[FLOW] route_early triggered", flush=True)
+        path = "early"
+        print("[FLOW] route_early triggered", flush=True)
         return respond(format_markdown_safe(r))
     
-    # print("[FLOW] checking route_intake", flush=True)
+    print("[FLOW] checking route_intake", flush=True)
     r = route_intake(q)
     if r:
-        # print("[FLOW] route_intake triggered", flush=True)
+        path = "intake"
+        print("[FLOW] route_intake triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 1) Policy/logistics hard stop
-    # print("[FLOW] checking route_policy_logistics", flush=True)
+    print("[FLOW] checking route_policy_logistics", flush=True)
     r = route_policy_logistics(q, context_chunks)
     if r:
-        # print("[FLOW] route_policy_logistics triggered", flush=True)
+        path = "policy_logistics"
+        print("[FLOW] route_policy_logistics triggered", flush=True)
         return respond(format_markdown_safe(r))
 
     # 2) Requirement vs suitability
-    # print("[FLOW] checking route_requirement", flush=True)
+    print("[FLOW] checking route_requirement", flush=True)
     rs = route_requirement_or_suitability(q, context_chunks)
     if rs:
-        # print("[FLOW] route_requirement", flush=True)
+        print("[FLOW] route_requirement", flush=True)
         kind, payload2 = rs
         if kind == "direct" and not is_suitability_question(q):
+            path = "requirement_direct"
             return respond(format_markdown_safe(payload2))
 
     # 3) LLM
-    answer = ask_llm(q, context_chunks)
-    answer = normalize_inline_numbered_lists(answer)
+    try:
+        path = "llm"
+        answer = ask_llm(q, context_chunks)
+        answer = normalize_inline_numbered_lists(answer)
+    except Exception as e:
+        path = "llm_error"
+        print(f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
+        return respond("Sorry — the AI service is temporarily unavailable. Please try again.", status_code=503)
+
 
     # print(f"[LLM] answer_len={len(answer or '')}", flush=True)
 
