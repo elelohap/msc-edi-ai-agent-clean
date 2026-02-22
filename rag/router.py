@@ -112,6 +112,10 @@ async def ask(request: Request):
     path = "unknown"
     chunks_count = 0
     top_score = None
+    retr_ms = 0
+    llm_ms = 0
+    db_ms = 0
+
 
     payload = await request.json()
     q = (payload.get("question") or payload.get("query") or "").strip()
@@ -122,14 +126,18 @@ async def ask(request: Request):
     ip = real_ip(request)
     ip_hash = hashlib.sha256(ip.encode("utf-8")).hexdigest()[:16]
 
-    def respond(answer_text: str, status_code: int = 200):
+    def respond(answer_text: str, status_code: int = 200, retr_ms=0, llm_ms=0):
+        t_db_start = time.time()
         latency_ms = int((time.time() - t0) * 1000)
         origin_short = _safe_origin(origin)
-        # ip_for_log = ip  # or a masked version if you prefer
+        
+        t_db_end = time.time()
+        db_ms = int((t_db_end - t_db_start) * 1000)
 
         print(
             f"[TRACE] path={path} ip_hash={ip_hash} origin={origin_short} "
             f"qlen={len(q)} chunks={chunks_count} top={top_score} "
+            f"retr_ms={retr_ms} llm_ms={llm_ms} db_ms={db_ms} "
             f"latency_ms={latency_ms} status={status_code}",
             flush=True
         )
@@ -157,12 +165,16 @@ async def ask(request: Request):
 
     # Retrieve once; reuse everywhere
     try: 
-        context_chunks = retrieve_context(q, top_k=8)
+        t_retr_start = time.time()
+        context_chunks = retrieve_context(q, top_k=6)
     except Exception as e:
         path = "retrieval_error"
         print(f"[ERROR] stage=retrieval ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
         return respond("Sorry — retrieval failed. Please try again.", status_code=500)    
-
+    
+    # calculates time for retrieval
+    t_retr_end = time.time()
+    retr_ms = int((t_retr_end - t_retr_start) * 1000)
 
     chunks_count = len(context_chunks or [])
     top_score = (context_chunks[0].get("score") if chunks_count else None)
@@ -216,12 +228,14 @@ async def ask(request: Request):
             return respond(format_markdown_safe(payload2))
 
     # 3) LLM
+    
+    
     try:
         path = "llm"
         
         preview = context_chunks[0]['text'][:120].replace('\n', ' ')
         print(f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={preview}", flush=True)
-              
+        t_llm_start = time.time()      
         answer = ask_llm(q, context_chunks)
         answer = normalize_inline_numbered_lists(answer)
     except Exception as e:
@@ -229,6 +243,8 @@ async def ask(request: Request):
         print(f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
         return respond("Sorry — the AI service is temporarily unavailable. Please try again.", status_code=503)
 
+    t_llm_end = time.time()
+    llm_ms = int((t_llm_end - t_llm_start) * 1000)    
 
     # print(f"[LLM] answer_len={len(answer or '')}", flush=True)
 
@@ -241,4 +257,4 @@ async def ask(request: Request):
     if not answer.strip():
         answer = pick_rag_fallback(q)
 
-    return respond(answer)
+    return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms)

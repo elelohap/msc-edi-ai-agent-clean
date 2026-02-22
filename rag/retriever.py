@@ -83,7 +83,7 @@ def _embed_query(text: str) -> np.ndarray:
     return vec
 
 # Finds the top_k closest chunk
-def retrieve_context(query: str, top_k: int = 8) -> List[Dict[str, Any]]:
+def retrieve_context(query: str, top_k: int = 6) -> List[Dict[str, Any]]:
     _load_resources()    #loads docs.pkl and faiss.index
     assert _docs is not None and _index is not None   # confirms that the two resources are available, else crash
     query = _normalize_query_for_retrieval(query)

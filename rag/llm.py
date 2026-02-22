@@ -134,8 +134,9 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
     """
     Uses a system message (policy/rules) + user message containing context and question.
     """
+    
     parts: List[str] = []
-    MAX_CHUNK_CHARS = 700
+    MAX_CHUNK_CHARS = 600
     for c in context_chunks or []:
         t = _chunk_to_text(c).strip()
         if t and t.strip():
