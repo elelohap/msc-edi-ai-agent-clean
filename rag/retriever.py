@@ -24,12 +24,20 @@ _index: faiss.Index | None = None
 
 _client = OpenAI()
 
-def _normalize_query_for_retrieval(q: str) -> str:
-    q2 = (q or "").strip()
+VALUE_ANCHORS = [
+    ("value", "value proposition benefits outcomes why choose highlights"),
+    ("worth it", "value proposition benefits outcomes"),
+]
 
-    # Expand "EDI" to improve retrieval consistency
+def _normalize_query_for_retrieval(q: str) -> str:
+    q0 = (q or "").strip()
+    q2 = q0
+
     if re.search(r"\bedi\b", q2, flags=re.IGNORECASE):
         q2 += " MSc Engineering Design and Innovation programme at NUS"
+
+    if re.search(r"\bvalue\b", q2, flags=re.IGNORECASE):
+        q2 += " value proposition benefits outcomes why choose highlights"
 
     return q2
 
