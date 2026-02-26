@@ -76,7 +76,7 @@ When answering suitability or background questions:
 
 FORMAT AND PRESENTATION RULES (STRICT):
 - Use Markdown formatting.
-- Use clear section headings (###).
+- Use clear section headings (##).
 - Every section heading MUST be on its own line, and the paragraph must start on the next line.
 - Insert a blank line after each heading.
 - Lists MUST be formatted as proper bullet lists, with each bullet on a new line.
@@ -89,7 +89,7 @@ FORMAT AND PRESENTATION RULES (STRICT):
 - Do NOT compress multiple ideas into a single paragraph.
 
 INLINE CONTINUATION RULE (NON-NEGOTIABLE):
-- A section heading (###) MUST be the only content on its line.
+- A section heading (##) MUST be the only content on its line.
 - No text is allowed on the same line as a section heading.
 """
 
