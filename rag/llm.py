@@ -77,8 +77,7 @@ When answering suitability or background questions:
 
 FORMAT AND PRESENTATION RULES (STRICT):
 - Use Markdown formatting.
-# - Use clear section headings (##).
-- Enumerate sections with numbers.
+- Use clear section headings (##).
 - Every section heading MUST be on its own line, and the paragraph must start on the next line.
 - Insert a blank line after each heading.
 - Lists MUST be formatted as proper bullet lists, with each bullet on a new line.

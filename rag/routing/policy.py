@@ -30,7 +30,7 @@ def answer_requirement(q: str, context_chunks: Any) -> str:
 
 def route_early(q: str) -> Optional[str]:
     if P.GREETING_PATTERN.match(q):
-        return "Hello! I can help with MSc EDI admissions questions."
+        return "Hello! I can help you with MSc EDI programme related questions."
     if P.THANKS_PATTERN.match(q):
         return "You’re welcome!"
     if P.PRAISE_PATTERN.match(q):

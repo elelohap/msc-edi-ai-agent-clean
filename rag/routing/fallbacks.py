@@ -6,7 +6,7 @@ MDES_REDIRECT_MSG = (
 )
 
 NOT_FOUND_FALLBACK = (
-    "I can’t find this in the MSc EDI admissions information I’m currently using. "
+    "I can’t find this in the MSc EDI admissions information I am currently using. "
     "If you rephrase your question, I may be able to help."
 )
 
@@ -22,7 +22,7 @@ SUITABILITY_FALLBACK = (
 )
 
 PROGRAMME_START_FALLBACK = (
-    "### Programme Start\n\n"
+    "## Programme Start\n\n"
     "- MSc EDI typically has one intake per academic year.\n"
     "- Classes usually start in the second half of the year (often around August).\n"
     "- Please refer to your offer/enrolment instructions for the confirmed start date.\n"
@@ -39,13 +39,13 @@ REAPPLICATION_FALLBACK = (
 )
 
 VISA_FALLBACK = (
-    "### Visa / Student Pass\n\n"
+    "## Visa / Student Pass\n\n"
     "- If you are an international student, you may need a Student’s Pass to study at NUS.\n"
     "- Visa/Student’s Pass steps are typically provided after you accept an offer.\n"
 )
 
 VISA_PROCESS_FALLBACK = (
-    "### Visa / Student Pass Process\n\n"
+    "## Visa / Student Pass Process\n\n"
     "- Visa application is typically handled after you accept an offer.\n"
     "- NUS will provide official instructions for applying for a Student’s Pass.\n"
     "- The exact steps depend on your nationality.\n"
