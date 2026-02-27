@@ -79,18 +79,16 @@ FORMAT AND PRESENTATION RULES (STRICT):
 
 - Do NOT use Markdown headings (no ## or ###).
 - Use simple bullet points (•) instead of "-" dashes.
-# - Avoid excessive bold formatting (**). Use bold sparingly or not at all.
 - Use bold sparingly or not at all
 - Keep formatting clean, simple, and conversational.
 - Prefer short paragraphs followed by concise bullet points.
 - Avoid long, dense blocks of text.
 
-#- Use Markdown formatting.
-#- Use clear section headings (##).
+
 - Every section heading MUST be on its own line, and the paragraph must start on the next line.
 - Insert a blank line after each heading.
 - Lists MUST be formatted as proper bullet lists, with each bullet on a new line.
-#- Numbered steps MUST be formatted as a Markdown list, never inline in a paragraph.
+- Numbered steps MUST never be inline in a paragraph.
 - If a sentence ends with “steps:” or “follow these steps:”, the list MUST start on the next line.
 - Insert a blank line before and after any bullet list.
 - Do NOT place bullet points on the same line as preceding sentences.
