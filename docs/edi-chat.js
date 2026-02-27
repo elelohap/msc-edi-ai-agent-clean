@@ -107,6 +107,27 @@
   }
   
 
+  .edi-followups{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:8px 0 14px 0;
+    justify-content:flex-start;
+  }
+  .edi-followup-chip{
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:999px;
+    padding:6px 10px;
+    font-size:11px;
+    cursor:pointer;
+    background:#fff;
+  }
+  .edi-followup-chip:hover{
+    background:var(--edi-soft);
+    border-color:rgba(0,0,0,.18);
+  }
+
+
   .edi-chip{
     border:1px solid rgba(0,0,0,.12);
     border-radius:999px;
@@ -246,6 +267,7 @@
     if (open) input.focus();
   };
 
+
   /* ============================
      Suggestions
      ============================ */
@@ -263,6 +285,39 @@
       sugBox.appendChild(chip);
     });
   };
+
+    const renderFollowups = (followups, anchorRow) => {
+    if (!followups || !Array.isArray(followups) || followups.length === 0) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "edi-followups";
+
+    followups.slice(0, 6).forEach((q) => {  // cap at 6 to avoid clutter
+      const chip = document.createElement("button");
+      chip.className = "edi-followup-chip";
+      chip.type = "button";
+      chip.textContent = q;
+
+      chip.onclick = () => {
+        input.value = q;
+        onSend();
+        wrap.remove(); // remove after click (keeps UI clean)
+      };
+
+      wrap.appendChild(chip);
+    });
+
+    // Insert right after the bot message row that just got added
+    if (anchorRow && anchorRow.parentNode) {
+      anchorRow.parentNode.insertBefore(wrap, anchorRow.nextSibling);
+    } else {
+      body.appendChild(wrap);
+    }
+
+    body.scrollTop = body.scrollHeight;
+  };
+
+  
 
   /* ============================
      Ask logic
@@ -309,9 +364,8 @@ if (!answer) {
   addMsg("bot", "Server returned 200 OK but no answer field was found.");
   return;
 }
-addMsg("bot", answer, true);
-
-
+const botRow = addMsg("bot", answer, true);
+renderFollowups(data?.followups, botRow);
 
     } catch (e) {
       if (typing.parentNode) body.removeChild(typing);
