@@ -262,7 +262,7 @@ except Exception as e:
     print(
         f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}",
         flush=True)
-return respond("Sorry — the AI service is temporarily unavailable. Please try again.",
+        return respond("Sorry — the AI service is temporarily unavailable. Please try again.",
         status_code=503)
 
 t_llm_end = time.time()
