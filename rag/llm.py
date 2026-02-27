@@ -79,7 +79,8 @@ FORMAT AND PRESENTATION RULES (STRICT):
 
 - Do NOT use Markdown headings (no ## or ###).
 - Use simple bullet points (•) instead of "-" dashes.
-- Avoid excessive bold formatting (**). Use bold sparingly or not at all.
+# - Avoid excessive bold formatting (**). Use bold sparingly or not at all.
+- Use bold sparingly or not at all
 - Keep formatting clean, simple, and conversational.
 - Prefer short paragraphs followed by concise bullet points.
 - Avoid long, dense blocks of text.
