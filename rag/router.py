@@ -232,52 +232,49 @@ async def ask(request: Request):
             path = "requirement_direct"
             return respond(format_markdown_safe(payload2))
 
-   # 3) LLM
-try:
-    path = "llm"
+    # 3) LLM
+    try:
+        path = "llm"
 
-    # (Optional) guard preview print to avoid IndexError
-    if context_chunks:
-        preview = context_chunks[0]["text"][:120].replace("\n", " ")
+        if context_chunks:
+            preview = context_chunks[0]["text"][:120].replace("\n", " ")
+            print(
+                f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} "
+                f"first_chunk_preview={preview}",
+                flush=True,
+            )
+
+        t_llm_start = time.time()
+
+        ret = ask_llm(q, context_chunks)
+
+        if isinstance(ret, tuple) and len(ret) == 2:
+            answer, followups = ret
+        else:
+            answer, followups = ret, None
+
+        answer = normalize_inline_numbered_lists(answer)
+
+    except Exception as e:
+        path = "llm_error"
         print(
-            f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={preview}",
+            f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}",
             flush=True,
         )
+        return respond(
+            "Sorry — the AI service is temporarily unavailable. Please try again.",
+            status_code=503,
+        )
 
-    t_llm_start = time.time()
+    t_llm_end = time.time()
+    llm_ms = int((t_llm_end - t_llm_start) * 1000)
 
-    ret = ask_llm(q, context_chunks)
+    # 4) Suitability fallback
+    if is_suitability_question(q) and not (answer or "").strip():
+        answer = pick_rag_fallback(q)
 
-    # Backward-compatible unpack (supports both old and new ask_llm)
-    if isinstance(ret, tuple) and len(ret) == 2:
-        answer, followups = ret
-    else:
-        answer, followups = ret, None
+    # 5) Final fallback
+    if not (answer or "").strip():
+        answer = pick_rag_fallback(q)
 
-    # Keep answer cleaning ONLY on the answer text
-    answer = normalize_inline_numbered_lists(answer)
-
-except Exception as e:
-    path = "llm_error"
-    print(
-        f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}",
-        flush=True,
-    )
-    return respond(
-        "Sorry — the AI service is temporarily unavailable. Please try again.",
-        status_code=503,
-    )
-
-t_llm_end = time.time()
-llm_ms = int((t_llm_end - t_llm_start) * 1000)
-
-# 4) Suitability fallback only if LLM failed
-if is_suitability_question(q) and not (answer or "").strip():
-    answer = pick_rag_fallback(q)
-
-# 5) Final generic fallback
-if not (answer or "").strip():
-    answer = pick_rag_fallback(q)
-
-return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
-
+    return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
