@@ -138,6 +138,39 @@ def normalize_inline_numbered_lists(text: str) -> str:
 
     return text
 
+def generate_followups(question: str) -> list[str]:
+    q = question.lower()
+
+    if "challenge" in q or "hard" in q:
+        return [
+            "What is the workload like in EDI?",
+            "What kind of projects will I work on?",
+            "How do students cope with the programme?"
+        ]
+
+    if "value" in q or "worth" in q:
+        return [
+            "What are the career outcomes of EDI?",
+            "What skills will I gain from the programme?",
+            "Who is EDI most suitable for?"
+        ]
+
+    if "apply" in q or "suitable" in q:
+        return [
+            "What are the admission requirements?",
+            "Do I need a portfolio for EDI?",
+            "What backgrounds are accepted?"
+        ]
+
+    # default fallback
+    return [
+        "What are the admission requirements?",
+        "What is the curriculum like?",
+        "What career opportunities does EDI lead to?"
+    ]
+
+
+
 
 def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
     """
@@ -185,5 +218,13 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
     )
 
     raw = completion.choices[0].message.content or ""
+
+    followups = generate_followups(question)
+
+    followup_text = "\n\nWould you like to know more?\n\n"
+    for f in followups:
+        followup_text += f"• {f}\n"
+
+    raw = raw.strip() + followup_text
     raw = normalize_inline_numbered_lists(raw)
     return format_markdown_safe(raw)
