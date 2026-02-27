@@ -126,10 +126,19 @@ async def ask(request: Request):
     ip = real_ip(request)
     ip_hash = hashlib.sha256(ip.encode("utf-8")).hexdigest()[:16]
 
-    def respond(answer_text: str, status_code: int = 200, retr_ms=0, llm_ms=0):
+    def respond(answer_text: str, status_code: int = 200, retr_ms=0, llm_ms=0, followups=None):
         t_db_start = time.time()
         latency_ms = int((time.time() - t0) * 1000)
         origin_short = _safe_origin(origin)
+        log_to_postgres(
+            origin=origin,
+            session_id=session_id,
+            ip_hash=ip_hash,
+            user_agent=user_agent,
+            question=q,
+            status=status_code,
+            latency_ms=latency_ms,
+        )
         
         t_db_end = time.time()
         db_ms = int((t_db_end - t_db_start) * 1000)
@@ -146,16 +155,12 @@ async def ask(request: Request):
         # TEMP DEBUG: remove after first successful row appears
         # print(f"[DBLOG] inserting ip_hash={ip_hash} status={status_code}", flush=True)
 
-        log_to_postgres(
-            origin=origin,
-            session_id=session_id,
-            ip_hash=ip_hash,
-            user_agent=user_agent,
-            question=q,
-            status=status_code,
-            latency_ms=latency_ms,
-        )
-        return JSONResponse({"answer": answer_text}, status_code=status_code)
+        
+        payload = {"answer": answer_text}
+        if followups:
+           payload["followups"] = followups
+        return JSONResponse(payload, status_code=status_code)
+
 
     if not q:
         path = "empty"
@@ -227,34 +232,52 @@ async def ask(request: Request):
             path = "requirement_direct"
             return respond(format_markdown_safe(payload2))
 
-    # 3) LLM
-    
-    
-    try:
-        path = "llm"
-        
-        preview = context_chunks[0]['text'][:120].replace('\n', ' ')
-        print(f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={preview}", flush=True)
-        t_llm_start = time.time()      
-        answer = ask_llm(q, context_chunks)
-        answer = normalize_inline_numbered_lists(answer)
-    except Exception as e:
-        path = "llm_error"
-        print(f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}", flush=True)
-        return respond("Sorry — the AI service is temporarily unavailable. Please try again.", status_code=503)
+   # 3) LLM
+try:
+    path = "llm"
 
-    t_llm_end = time.time()
-    llm_ms = int((t_llm_end - t_llm_start) * 1000)    
+    # (Optional) guard preview print to avoid IndexError
+    if context_chunks:
+        preview = context_chunks[0]["text"][:120].replace("\n", " ")
+        print(
+            f"[CHK] first_chunk_len={len(context_chunks[0]['text'])} first_chunk_preview={preview}",
+            flush=True,
+        )
 
-    # print(f"[LLM] answer_len={len(answer or '')}", flush=True)
+    t_llm_start = time.time()
 
+    ret = ask_llm(q, context_chunks)
 
-    # 4) Suitability fallback only if LLM failed
-    if is_suitability_question(q) and not answer.strip():
-        answer = pick_rag_fallback(q)
+    # Backward-compatible unpack (supports both old and new ask_llm)
+    if isinstance(ret, tuple) and len(ret) == 2:
+        answer, followups = ret
+    else:
+        answer, followups = ret, None
 
-    # 5) Final generic fallback
-    if not answer.strip():
-        answer = pick_rag_fallback(q)
+    # Keep answer cleaning ONLY on the answer text
+    answer = normalize_inline_numbered_lists(answer)
 
-    return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms)
+except Exception as e:
+    path = "llm_error"
+    print(
+        f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}",
+        flush=True,
+    )
+    return respond(
+        "Sorry — the AI service is temporarily unavailable. Please try again.",
+        status_code=503,
+    )
+
+t_llm_end = time.time()
+llm_ms = int((t_llm_end - t_llm_start) * 1000)
+
+# 4) Suitability fallback only if LLM failed
+if is_suitability_question(q) and not (answer or "").strip():
+    answer = pick_rag_fallback(q)
+
+# 5) Final generic fallback
+if not (answer or "").strip():
+    answer = pick_rag_fallback(q)
+
+return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
+

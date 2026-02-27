@@ -46,8 +46,8 @@ TOP PRIORITY NON-NEGOTIABLE RULES:
 3) EDI ALWAYS means Engineering Design & Innovation (never Equity, Diversity, and Inclusion).
 
 PROGRAMME OVERVIEW ANSWERING MODE:
-- When the user asks for an overview, introduction, or indicates general interest in the MSc in Engineering Design & Innovation or EDI,
-  you MUST provide a structured programme overview.
+- When the user asks for an overview, introduction, or indicates general interest in the MSc in Engineering Design & Innovation or EDI, you MUST provide a structured overview.
+- Do NOT add section titles like "Programme Overview". Just start with a short introductory sentence and bullet points. 
 - You MUST organise the response using clear sections.
 - You MAY synthesise across multiple provided context sections.
 - Keep answers concise; prefer bullets; if the user asks ‘tell me more’, provide a short overview + offer to expand.
@@ -219,12 +219,11 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
 
     raw = completion.choices[0].message.content or ""
 
-    followups = generate_followups(question)
+   followups = generate_followups(question)
 
-    followup_text = "\n\nWould you like to know more?\n\n"
-    for f in followups:
-        followup_text += f"• {f}\n"
+   raw = raw.strip()
+   raw = normalize_inline_numbered_lists(raw)
+   answer = format_markdown_safe(raw)
 
-    raw = raw.strip() + followup_text
-    raw = normalize_inline_numbered_lists(raw)
-    return format_markdown_safe(raw)
+   return answer, followups
+
