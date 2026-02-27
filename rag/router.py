@@ -261,9 +261,12 @@ except Exception as e:
     path = "llm_error"
     print(
         f"[ERROR] stage=llm ip={ip_hash} origin={_safe_origin(origin)} err={repr(e)}",
-        flush=True)
-        return respond("Sorry — the AI service is temporarily unavailable. Please try again.",
-        status_code=503)
+        flush=True,
+    )
+    return respond(
+        "Sorry — the AI service is temporarily unavailable. Please try again.",
+        status_code=503,
+    )
 
 t_llm_end = time.time()
 llm_ms = int((t_llm_end - t_llm_start) * 1000)
