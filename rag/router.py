@@ -277,4 +277,25 @@ async def ask(request: Request):
     if not (answer or "").strip():
         answer = pick_rag_fallback(q)
 
+   
+def clean_followups(followups, question):
+    q = question.lower().strip()
+    cleaned = []
+
+    for f in followups or []:
+        f_clean = f.lower().strip()
+
+        # remove exact match
+        if f_clean == q:
+            continue
+
+        # remove near match (contains)
+        if f_clean in q or q in f_clean:
+            continue
+
+        cleaned.append(f)
+
+    return cleaned
+    
+    followups = clean_followups(followups,q)
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
