@@ -219,11 +219,11 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
 
     raw = completion.choices[0].message.content or ""
 
-   followups = generate_followups(question)
+    followups = generate_followups(question)
 
-   raw = raw.strip()
-   raw = normalize_inline_numbered_lists(raw)
-   answer = format_markdown_safe(raw)
+    raw = raw.strip()
+    raw = normalize_inline_numbered_lists(raw)
+    answer = format_markdown_safe(raw)
 
-   return answer, followups
+    return answer, followups
 
