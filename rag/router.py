@@ -253,7 +253,7 @@ async def ask(request: Request):
         else:
             answer, followups = ret, None
 
-        answer = normalizeask_inline_numbered_lists(answer)
+        answer = normalize_inline_numbered_lists(answer)
 
     except Exception as e:
         path = "llm_error"
