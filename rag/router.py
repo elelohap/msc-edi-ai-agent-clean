@@ -190,7 +190,7 @@ async def ask(request: Request):
 
     if DEBUG_RAG:
         print("[RAG] top chunks preview:", flush=True)
-        for i, c in enumerate(context_chunks[:3]):
+        for i, c in enumerate(context_chunks[:2]):
             preview = (c.get("text","") if isinstance(c, dict) else str(c))[:120].replace("\n"," ")
             print(f"  - {i+1}: {preview}...", flush=True)
 

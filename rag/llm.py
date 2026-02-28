@@ -138,31 +138,50 @@ def normalize_inline_numbered_lists(text: str) -> str:
 
     return text
 
-def generate_followups(question: str) -> list[str]:
+def generate_followups(question: str, context_chunks) -> list[str]:
     q = question.lower()
 
-    if "challenge" in q or "hard" in q:
+    # Extract top context text (lightweight, fast)
+    context_text = " ".join(
+        [c.get("text", "") for c in (context_chunks or [])[:3]]
+    ).lower()
+
+    # Combine both signals
+    combined = q + " " + context_text
+
+    # Difficulty / challenge
+    if "challenge" in combined or "hard" in combined or "rigor" in combined:
         return [
             "What is the workload like in EDI?",
             "What kind of projects will I work on?",
-            "How do students cope with the programme?"
+            "How do students cope in the programme?"
         ]
 
-    if "value" in q or "worth" in q:
+    # Value / outcomes
+    if "value" in combined or "worth" in combined or "career" in combined:
         return [
             "What are the career outcomes of EDI?",
             "What skills will I gain from the programme?",
-            "Who is EDI most suitable for?"
+            "What industries do graduates enter?"
         ]
 
-    if "apply" in q or "suitable" in q:
+    # Curriculum detected from context
+    if "course" in combined or "module" in combined or "curriculum" in combined:
+        return [
+            "What courses are included in the programme?",
+            "Are there electives available?",
+            "How are projects structured?"
+        ]
+
+    # Admissions / suitability
+    if "apply" in combined or "suitable" in combined or "admission" in combined:
         return [
             "What are the admission requirements?",
             "Do I need a portfolio for EDI?",
             "What backgrounds are accepted?"
         ]
 
-    # default fallback
+    # Default fallback
     return [
         "What are the admission requirements?",
         "What is the curriculum like?",
@@ -219,7 +238,7 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
 
     raw = completion.choices[0].message.content or ""
 
-    followups = generate_followups(question)
+    followups = generate_followups(question, context_chunks)
 
     raw = raw.strip()
     raw = normalize_inline_numbered_lists(raw)
