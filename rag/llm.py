@@ -187,7 +187,7 @@ def generate_followups(question: str, context_chunks) -> list[str]:
         "What is the curriculum like?",
         "What career opportunities does EDI lead to?"
     ]
-
+    followups = generate_followups(question, context_chunks)
 
 
 
@@ -238,7 +238,7 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
 
     raw = completion.choices[0].message.content or ""
 
-    followups = generate_followups(question, context_chunks)
+    #followups = generate_followups(question, context_chunks)
 
     raw = raw.strip()
     raw = normalize_inline_numbered_lists(raw)
