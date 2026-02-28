@@ -22,6 +22,9 @@ from typing import Optional
 
 import psycopg2
 
+print(f"[BOOT] router __file__ = {__file__}", flush=True)
+
+
 # codes for traceability if anything goes wrong
 def _safe_origin(origin: str | None) -> str:
     if not origin:
