@@ -297,5 +297,5 @@ def clean_followups(followups, question):
 
     return cleaned
     
-    followups = clean_followups(followups,q)
+    followups = clean_followups(followups,q) if followups else None
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
