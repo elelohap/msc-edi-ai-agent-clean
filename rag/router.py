@@ -100,6 +100,25 @@ def normalize_inline_numbered_lists(text: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text
 
+def clean_followups(followups, question):
+    q = question.lower().strip()
+    cleaned = []
+
+    for f in followups or []:
+        f_clean = f.lower().strip()
+
+        # remove exact match
+        if f_clean == q:
+            continue
+
+        # remove near match (contains)
+        if f_clean in q or q in f_clean:
+            continue
+
+        cleaned.append(f)
+
+    return cleaned
+
 
 # -----------------------------
 # Main endpoint
@@ -278,24 +297,6 @@ async def ask(request: Request):
         answer = pick_rag_fallback(q)
 
    
-def clean_followups(followups, question):
-    q = question.lower().strip()
-    cleaned = []
-
-    for f in followups or []:
-        f_clean = f.lower().strip()
-
-        # remove exact match
-        if f_clean == q:
-            continue
-
-        # remove near match (contains)
-        if f_clean in q or q in f_clean:
-            continue
-
-        cleaned.append(f)
-
-    return cleaned
     
     followups = clean_followups(followups,q) if followups else None
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
