@@ -17,6 +17,39 @@ def _canon(text: str) -> str:
 def _similar(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
+# Add after _similar()
+
+_FILLER_WORDS = {
+    "what", "which", "who", "whom", "whose", "when", "where", "why", "how",
+    "is", "are", "was", "were", "do", "does", "did",
+    "can", "could", "will", "would", "should", "may", "might",
+    "the", "a", "an", "of", "to", "in", "on", "for", "with", "at", "from", "by", "about",
+    "i", "me", "my", "we", "our", "you", "your",
+    "type", "kind",  # <-- key for your duplicate case
+}
+
+def _content_tokens(text: str) -> set[str]:
+    toks = []
+    for w in _canon(text).split():
+        if w in _FILLER_WORDS:
+            continue
+        # ultra-light singularization: projects -> project
+        if len(w) > 3 and w.endswith("s"):
+            w = w[:-1]
+        toks.append(w)
+    return set(toks)
+
+def _content_duplicate(a: str, b: str) -> bool:
+    ta = _content_tokens(a)
+    tb = _content_tokens(b)
+    if not ta or not tb:
+        return False
+    if ta == tb:
+        return True
+    # strong overlap is effectively "same question"
+    overlap = len(ta & tb) / min(len(ta), len(tb))
+    return overlap >= 0.90
+
 
 def generate_followups(question: str, context_chunks: Optional[List[Dict[str, Any]]]) -> List[str]:
     """
@@ -98,6 +131,10 @@ def clean_followups(
         if f_can in q or q in f_can:
             continue
 
+        # content-token duplicate (catches "type/kind of" variants)
+        if _content_duplicate(f, question):
+            continue
+
         # fuzzy similarity
         if len(f_can) > min_len and _similar(f_can, q) > similarity_threshold:
             continue
@@ -105,6 +142,11 @@ def clean_followups(
         # dedupe within followups
         if f_can in seen:
             continue
+
+        # dedupe within followups (content-level)
+        if any(_content_duplicate(f, prev) for prev in cleaned):
+            continue
+
 
         cleaned.append(f.strip())
         seen.add(f_can)
