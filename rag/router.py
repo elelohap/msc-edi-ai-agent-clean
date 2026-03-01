@@ -19,7 +19,8 @@ import time
 import hashlib
 import os
 from typing import Optional
-
+import unicodedata
+from difflib import SequenceMatcher
 import psycopg2
 
 # codes for traceability if anything goes wrong
@@ -34,8 +35,6 @@ def _safe_origin(origin: str | None) -> str:
     except Exception:
         return origin[:80]
 
-
-# print("ROUTER FILE LOADED FROM:", __file__, flush=True)
 
 router = APIRouter()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -100,24 +99,77 @@ def normalize_inline_numbered_lists(text: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text
 
-def clean_followups(followups, question):
-    q = question.lower().strip()
+_PUNCT_RE = re.compile(r"[^\w\s]")  # keep letters/numbers/underscore/space
+
+def _canon(text: str) -> str:
+    if not text:
+        return ""
+    t = unicodedata.normalize("NFKC", text)
+    t = t.lower().strip()
+    t = _PUNCT_RE.sub(" ", t)          # strip punctuation
+    t = re.sub(r"\s+", " ", t).strip() # collapse whitespace
+    return t
+
+def _similar(a: str, b: str) -> float:
+    return SequenceMatcher(None, a, b).ratio()
+
+def clean_followups(
+    followups,
+    question,
+    *,
+    max_items: int = 5,
+    similarity_threshold: float = 0.92,
+    min_len_for_fuzzy: int = 18,
+):
+    """
+    Removes duplicates / near-duplicates vs the user question and within followups.
+    No extra LLM calls. Stdlib only.
+    """
+    q_can = _canon(question)
     cleaned = []
+    seen = set()  # canonical forms we've kept
 
     for f in followups or []:
-        f_clean = f.lower().strip()
-
-        # remove exact match
-        if f_clean == q:
+        if not f or not f.strip():
             continue
 
-        # remove near match (contains)
-        if f_clean in q or q in f_clean:
+        f_can = _canon(f)
+
+        # 1) Remove exact match after canonicalization
+        if f_can == q_can:
             continue
 
-        cleaned.append(f)
+        # 2) Remove obvious contains match (canonical)
+        # (useful for small additions like " ... in EDI?")
+        if f_can and q_can and (f_can in q_can or q_can in f_can):
+            continue
+
+        # 3) Remove near-duplicate using fuzzy similarity (only if long enough)
+        if len(f_can) >= min_len_for_fuzzy and len(q_can) >= min_len_for_fuzzy:
+            if _similar(f_can, q_can) >= similarity_threshold:
+                continue
+
+        # 4) De-dupe within followups (exact canonical)
+        if f_can in seen:
+            continue
+
+        # 5) De-dupe within followups (near-duplicate)
+        # small list, so O(n^2) is fine
+        if any(
+            _similar(f_can, _canon(prev)) >= similarity_threshold
+            for prev in cleaned
+            if len(f_can) >= min_len_for_fuzzy and len(_canon(prev)) >= min_len_for_fuzzy
+        ):
+            continue
+
+        cleaned.append(f.strip())
+        seen.add(f_can)
+
+        if len(cleaned) >= max_items:
+            break
 
     return cleaned
+
 
 
 # -----------------------------
