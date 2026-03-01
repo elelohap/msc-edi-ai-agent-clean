@@ -5,6 +5,9 @@ from rag.llm import ask_llm
 from rag.retriever import retrieve_context
 from rag.formatting.markdown import format_markdown_safe
 from rag.limits import limiter, real_ip
+from rag.formatting.text import format_answer_text
+from rag.followups import clean_followups
+
 
 from rag.routing.policy import (
     route_early,
@@ -19,8 +22,6 @@ import time
 import hashlib
 import os
 from typing import Optional
-import unicodedata
-from difflib import SequenceMatcher
 import psycopg2
 
 # codes for traceability if anything goes wrong
@@ -88,95 +89,6 @@ def is_suitability_question(q: str) -> bool:
         "chance of admission",
         "should i apply",
     ])
-
-
-#--------------------------------
-# Formatting answers
-#--------------------------------
-
-def normalize_inline_numbered_lists(text: str) -> str:
-    if not text:
-        return text
-    text = re.sub(r":\s*(\d+\.)\s+\*\*", r":\n\n\1 **", text, flags=re.IGNORECASE)
-    text = re.sub(r"(?<!\n)\s+(\d+\.)\s+\*\*", r"\n\n\1 **", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text
-
-
-def normalize_bullets(text: str) -> str:
-    if not text:
-        return text
-
-    t = text.replace("\r\n", "\n").replace("\r", "\n")
-
-    # Put bullets on their own line if they appear inline
-    # "blah. • item" -> "blah.\n• item"
-    t = re.sub(r"([^\n])\s*(•\s+)", r"\1\n\2", t)
-
-    # "• a • b" -> "• a\n• b"
-    t = re.sub(r"\s+(•\s+)", r"\n\1", t)
-
-    # Optional: ensure blank line before list blocks for nicer rendering
-    t = re.sub(r"\n(•\s+)", r"\n\n\1", t)
-
-    # Collapse excessive blank lines
-    t = re.sub(r"\n{3,}", "\n\n", t)
-
-    return t.strip()
-
-
-def format_answer_text(text: str) -> str:
-    """One place to apply all formatting normalizations."""
-    text = normalize_inline_numbered_lists(text)
-    text = normalize_bullets(text)
-    return text
-
-
-
-
-
-
-_PUNCT_RE = re.compile(r"[^\w\s]")
-
-def _canon(text: str) -> str:
-    t = unicodedata.normalize("NFKC", text or "")
-    t = t.lower().strip()
-    t = _PUNCT_RE.sub(" ", t)
-    t = re.sub(r"\s+", " ", t).strip()
-    return t
-
-def _similar(a: str, b: str) -> float:
-    return SequenceMatcher(None, a, b).ratio()
-
-
-def clean_followups(followups, question):
-    q = _canon(question)
-    cleaned = []
-    seen = set()
-
-    for f in followups or []:
-        f_can = _canon(f)
-
-        # 1. exact match (stronger now with canonical form)
-        if f_can == q:
-            continue
-
-        # 2. contains (more robust now)
-        if f_can in q or q in f_can:
-            continue
-
-        # 3. NEW: fuzzy similarity (key fix)
-        if len(f_can) > 15 and _similar(f_can, q) > 0.92:
-            continue
-
-        # 4. remove duplicates within followups
-        if f_can in seen:
-            continue
-
-        cleaned.append(f.strip())
-        seen.add(f_can)
-
-    return cleaned
 
 
 
@@ -332,8 +244,7 @@ async def ask(request: Request):
         else:
             answer, followups = ret, None
 
-        answer = normalize_inline_numbered_lists(answer)
-
+        
     except Exception as e:
         path = "llm_error"
         print(
@@ -358,6 +269,5 @@ async def ask(request: Request):
 
    
     answer = format_answer_text(answer)
-
     followups = clean_followups(followups,q) if followups else None
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)

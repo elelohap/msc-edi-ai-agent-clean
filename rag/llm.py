@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any, Dict, List
+from rag.followups import generate_followups
+from typing import Any, Dict, List, Tuple
 
 from openai import OpenAI
 
@@ -85,7 +86,8 @@ FORMAT AND PRESENTATION RULES (STRICT):
 - Avoid long, dense blocks of text.
 - Every section heading MUST be on its own line, and the paragraph must start on the next line.
 - Insert a blank line after each heading.
-- Lists MUST be formatted as proper bullet lists, with each bullet on a new line.
+- Lists MUST be formatted as proper bullet lists
+- Each bullet point MUST be on a new line and MUST never be inline in a paragraph.
 - Numbered steps MUST never be inline in a paragraph.
 - If a sentence ends with “steps:” or “follow these steps:”, the list MUST start on the next line.
 - Insert a blank line before and after any bullet list.
@@ -120,78 +122,7 @@ def _chunk_to_text(chunk: Dict[str, Any]) -> str:
     return str(v)
 
 
-def normalize_inline_numbered_lists(text: str) -> str:
-    """
-    Restored from llm-old.py: fixes the common '1. **...** 2. **...**' inline formatting.
-    """
-    if not text:
-        return text
-
-    # Force newline after ":" if followed by a numbered item
-    text = re.sub(r":\s*(\d+\.)\s+\*\*", r":\n\n\1 **", text, flags=re.IGNORECASE)
-
-    # Force numbered items to start at beginning of a line unless they already do
-    text = re.sub(r"(?<!\n)(\d+\.)\s+\*\*", r"\n\n\1 **", text)
-
-    # Clean up accidental triple newlines
-    text = re.sub(r"\n{3,}", "\n\n", text)
-
-    return text
-
-def generate_followups(question: str, context_chunks) -> list[str]:
-    q = question.lower()
-
-    # Extract top context text (lightweight, fast)
-    context_text = " ".join(
-        [c.get("text", "") for c in (context_chunks or [])[:3]]
-    ).lower()
-
-    # Combine both signals
-    combined = q + " " + context_text
-
-    # Difficulty / challenge
-    if "challenge" in combined or "hard" in combined or "rigor" in combined:
-        return [
-            "What is the workload like in EDI?",
-            "What kind of projects will I work on?",
-            "How do students cope in the programme?"
-        ]
-
-    # Value / outcomes
-    if "value" in combined or "worth" in combined or "career" in combined:
-        return [
-            "What are the career outcomes of EDI?",
-            "What skills will I gain from the programme?",
-            "What industries do graduates enter?"
-        ]
-
-    # Curriculum detected from context
-    if "course" in combined or "module" in combined or "curriculum" in combined:
-        return [
-            "What courses are included in the programme?",
-            "Are there electives available?",
-            "How are projects structured?"
-        ]
-
-    # Admissions / suitability
-    if "apply" in combined or "suitable" in combined or "admission" in combined:
-        return [
-            "What are the admission requirements?",
-            "Do I need a portfolio for EDI?",
-            "What backgrounds are accepted?"
-        ]
-
-    # Default fallback
-    return [
-        "What are the admission requirements?",
-        "What is the curriculum like?",
-        "What career opportunities does EDI lead to?"
-    ]
-    #followups = generate_followups(question, context_chunks)
-
-
-
-def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
+def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, List[str]]:
     """
     Uses a system message (policy/rules) + user message containing context and question.
     """
@@ -240,9 +171,8 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> str:
 
     followups = generate_followups(question, context_chunks)
 
-    raw = raw.strip()
-    raw = normalize_inline_numbered_lists(raw)
+    raw = (raw or "").strip()
     answer = format_markdown_safe(raw)
-
     return answer, followups
+
 
