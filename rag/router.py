@@ -7,6 +7,7 @@ from rag.formatting.markdown import format_markdown_safe
 from rag.limits import limiter, real_ip
 from rag.formatting.text import format_answer_text
 from rag.followups import clean_followups
+from rag.conversion import get_conversion_nudge
 
 
 from rag.routing.policy import (
@@ -268,6 +269,11 @@ async def ask(request: Request):
         answer = pick_rag_fallback(q)
 
    
+    nudge = get_conversion_nudge(q)
+
+    if nudge:
+        answer = f"{answer}\n\n{nudge}"
+
     answer = format_answer_text(answer)
     followups = clean_followups(followups,q) if followups else None
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
