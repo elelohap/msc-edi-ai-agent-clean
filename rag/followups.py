@@ -73,7 +73,7 @@ def generate_followups(question: str, context_chunks: Optional[List[Dict[str, An
 
     if "value" in combined or "worth" in combined or "career" in combined:
         return [
-            "What are the career outcomes of EDI?",
+            "What are the career prospects for EDI graduates?",
             "What skills will I gain from the programme?",
             "What industries do graduates enter?",
         ]
@@ -81,21 +81,21 @@ def generate_followups(question: str, context_chunks: Optional[List[Dict[str, An
     if "course" in combined or "module" in combined or "curriculum" in combined:
         return [
             "What courses are included in the programme?",
-            "Are there electives available?",
-            "How are projects structured?",
+            "Are there elective courses available?",
+            "How do I choose my courses?",
         ]
 
     if "apply" in combined or "suitable" in combined or "admission" in combined:
         return [
             "What are the admission requirements?",
             "Do I need a portfolio for EDI?",
-            "What backgrounds are accepted?",
+            "What backgrounds are suitable for EDI?",
         ]
 
     return [
         "What are the admission requirements?",
         "What is the curriculum like?",
-        "What career opportunities does EDI lead to?",
+        "What career opportunities do EDI lead to?",
     ]
 
 
