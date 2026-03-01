@@ -50,52 +50,66 @@ def _content_duplicate(a: str, b: str) -> bool:
     overlap = len(ta & tb) / min(len(ta), len(tb))
     return overlap >= 0.90
 
-
-def generate_followups(question: str, context_chunks: Optional[List[Dict[str, Any]]]) -> List[str]:
-    """
-    Lightweight rule-based followup generation (no extra LLM calls).
-    Moved from llm.py.
-    """
+def generate_followups(question: str, context_chunks=None):
     q = (question or "").lower()
 
-    context_text = " ".join(
-        [(c.get("text", "") if isinstance(c, dict) else str(c)) for c in (context_chunks or [])[:3]]
-    ).lower()
+    def has(*keywords):
+        return any(k in q for k in keywords)
 
-    combined = q + " " + context_text
-
-    if "challenge" in combined or "hard" in combined or "rigor" in combined:
+    if has("project", "projects", "hands-on"):
         return [
             "What is the workload like in EDI?",
+            "What skills will I gain from these projects?",
+            "What are the career outcomes after EDI?",
+        ]
+
+    if has("workload", "stress", "cope", "difficult"):
+        return [
             "What type of projects will I work on?",
-            "How do students cope in the programme?",
+            "What support systems are available for students?",
+            "What are the career outcomes after EDI?",
         ]
 
-    if "value" in combined or "worth" in combined or "career" in combined:
+    if has("career", "job", "employment"):
         return [
-            "What are the career prospects for EDI graduates?",
-            "What skills will I gain from the programme?",
+            "What skills will I gain from EDI?",
             "What industries do graduates enter?",
+            "What are the admission requirements?",
         ]
 
-    if "course" in combined or "module" in combined or "curriculum" in combined:
-        return [
-            "What courses are included in the programme?",
-            "Are there elective courses available?",
-            "How do I choose my courses?",
-        ]
-
-    if "apply" in combined or "suitable" in combined or "admission" in combined:
+    if has("apply", "admission", "eligible", "suitable"):
         return [
             "What are the admission requirements?",
             "Do I need a portfolio for EDI?",
-            "What backgrounds are suitable for EDI?",
+            "How do I apply to the EDI programme?",
+        ]
+
+    if has("deadline", "process", "timeline"):
+        return [
+            "What documents are required for application?",
+            "What is the application timeline?",
+            "How do I apply to the EDI programme?",
+        ]
+
+    if has("visa", "international", "student pass"):
+        return [
+            "Do I need a visa to study at NUS?",
+            "What is the application process for international students?",
+            "What are the admission requirements?",
         ]
 
     return [
-        "What are the admission requirements?",
         "What is the curriculum like?",
-        "What career opportunities do EDI lead to?",
+        "What type of projects will I work on?",
+        "What are the career outcomes after EDI?",
+    ]
+
+def followups_when_unanswerable(question: str) -> list[str]:
+    # keep these 100% within your documented coverage
+    return [
+        "What is the curriculum like?",
+        "What type of projects will I work on?",
+        "What are the admission requirements?",
     ]
 
 

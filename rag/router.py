@@ -6,7 +6,7 @@ from rag.retriever import retrieve_context
 from rag.formatting.markdown import format_markdown_safe
 from rag.limits import limiter, real_ip
 from rag.formatting.text import format_answer_text
-from rag.followups import clean_followups
+from rag.followups import clean_followups, followups_when_unanswerable
 from rag.conversion import get_conversion_nudge
 
 
@@ -238,7 +238,7 @@ async def ask(request: Request):
 
         t_llm_start = time.time()
 
-        ret = ask_llm(q, context_chunks)
+        ret, followups, answerable = ask_llm(q, context_chunks)
 
         if isinstance(ret, tuple) and len(ret) == 2:
             answer, followups = ret
@@ -268,12 +268,29 @@ async def ask(request: Request):
     if not (answer or "").strip():
         answer = pick_rag_fallback(q)
 
-   
-    nudge = get_conversion_nudge(q)
+    def followups_when_unanswerable(question: str) -> list[str]:
+    # Keep to 3 “known-covered” questions
+    return [
+        "What is the curriculum like?",
+        "What kind of projects will I work on?",
+        "What are the admission requirements?",
+    ]
 
+    #answer = format_answer_text(answer)
+    #followups = clean_followups(followups,q) if followups else None
+
+    # 1) followups: if unanswerable, show safe followups
+    if not answerable:
+        followups = followups_when_unanswerable(q)
+    else:
+        followups = clean_followups(followups, q) if followups else None
+
+    # 2) nudge: capability-aware
+    nudge = get_conversion_nudge(q, answerable)
     if nudge:
         answer = f"{answer}\n\n{nudge}"
 
+    # 3) final answer formatting (bullets/numbering)
     answer = format_answer_text(answer)
-    followups = clean_followups(followups,q) if followups else None
+    
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)

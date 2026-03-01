@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from rag.followups import generate_followups
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 from openai import OpenAI
 
@@ -121,8 +121,7 @@ def _chunk_to_text(chunk: Dict[str, Any]) -> str:
         return json.dumps(v, ensure_ascii=False)
     return str(v)
 
-
-def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, List[str]]:
+def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, Optional[List[str]], bool]:
     """
     Uses a system message (policy/rules) + user message containing context and question.
     """
@@ -140,13 +139,16 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, L
 
     if not context_text.strip():
         return "The answer is not in the provided documents."
+        followups = None
+        answerable = False
 
-    user_prompt = f"""You must answer in well-formatted Markdown.
+    user_prompt = f"""You must answer in well-formatted paragraphs.
     
     Rules:
     - Use ONLY the information in the Context.
     - If the Context does not contain the answer, say: "The answer is not in the provided documents."
     - Do not guess and do not add facts not supported by the Context.
+
 
     Context:
     {context_text}
@@ -173,6 +175,7 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, L
 
     raw = (raw or "").strip()
     answer = format_markdown_safe(raw)
-    return answer, followups
+    answerable = True
+    return answer, followups, answerable
 
 
