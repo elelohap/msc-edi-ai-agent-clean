@@ -127,8 +127,7 @@
     border-color:rgba(0,0,0,.18);
   }
 
-
-  .edi-chip{
+   .edi-chip{
     border:1px solid rgba(0,0,0,.12);
     border-radius:999px;
     padding:6px 10px;
@@ -157,6 +156,7 @@
     font-size:13px;line-height:1.35;
     white-space:pre-wrap
   }
+   .edi-message { white-space: pre-wrap; }
   .edi-msg.user .edi-bubble{background:var(--edi-accent);color:var(--edi-accent-ink);
      border-top-right-radius:4px}
   .edi-msg.bot .edi-bubble{background:#f4f4f5;color:#111;border-top-left-radius:4px}

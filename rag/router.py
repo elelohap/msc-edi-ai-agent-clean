@@ -90,83 +90,91 @@ def is_suitability_question(q: str) -> bool:
     ])
 
 
+#--------------------------------
+# Formatting answers
+#--------------------------------
+
 def normalize_inline_numbered_lists(text: str) -> str:
     if not text:
         return text
-
     text = re.sub(r":\s*(\d+\.)\s+\*\*", r":\n\n\1 **", text, flags=re.IGNORECASE)
     text = re.sub(r"(?<!\n)\s+(\d+\.)\s+\*\*", r"\n\n\1 **", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text
 
-_PUNCT_RE = re.compile(r"[^\w\s]")  # keep letters/numbers/underscore/space
+
+def normalize_bullets(text: str) -> str:
+    if not text:
+        return text
+
+    t = text.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Put bullets on their own line if they appear inline
+    # "blah. • item" -> "blah.\n• item"
+    t = re.sub(r"([^\n])\s*(•\s+)", r"\1\n\2", t)
+
+    # "• a • b" -> "• a\n• b"
+    t = re.sub(r"\s+(•\s+)", r"\n\1", t)
+
+    # Optional: ensure blank line before list blocks for nicer rendering
+    t = re.sub(r"\n(•\s+)", r"\n\n\1", t)
+
+    # Collapse excessive blank lines
+    t = re.sub(r"\n{3,}", "\n\n", t)
+
+    return t.strip()
+
+
+def format_answer_text(text: str) -> str:
+    """One place to apply all formatting normalizations."""
+    text = normalize_inline_numbered_lists(text)
+    text = normalize_bullets(text)
+    return text
+
+
+
+
+
+
+_PUNCT_RE = re.compile(r"[^\w\s]")
 
 def _canon(text: str) -> str:
-    if not text:
-        return ""
-    t = unicodedata.normalize("NFKC", text)
+    t = unicodedata.normalize("NFKC", text or "")
     t = t.lower().strip()
-    t = _PUNCT_RE.sub(" ", t)          # strip punctuation
-    t = re.sub(r"\s+", " ", t).strip() # collapse whitespace
+    t = _PUNCT_RE.sub(" ", t)
+    t = re.sub(r"\s+", " ", t).strip()
     return t
 
 def _similar(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
-def clean_followups(
-    followups,
-    question,
-    *,
-    max_items: int = 5,
-    similarity_threshold: float = 0.92,
-    min_len_for_fuzzy: int = 18,
-):
-    """
-    Removes duplicates / near-duplicates vs the user question and within followups.
-    No extra LLM calls. Stdlib only.
-    """
-    q_can = _canon(question)
+
+def clean_followups(followups, question):
+    q = _canon(question)
     cleaned = []
-    seen = set()  # canonical forms we've kept
+    seen = set()
 
     for f in followups or []:
-        if not f or not f.strip():
-            continue
-
         f_can = _canon(f)
 
-        # 1) Remove exact match after canonicalization
-        if f_can == q_can:
+        # 1. exact match (stronger now with canonical form)
+        if f_can == q:
             continue
 
-        # 2) Remove obvious contains match (canonical)
-        # (useful for small additions like " ... in EDI?")
-        if f_can and q_can and (f_can in q_can or q_can in f_can):
+        # 2. contains (more robust now)
+        if f_can in q or q in f_can:
             continue
 
-        # 3) Remove near-duplicate using fuzzy similarity (only if long enough)
-        if len(f_can) >= min_len_for_fuzzy and len(q_can) >= min_len_for_fuzzy:
-            if _similar(f_can, q_can) >= similarity_threshold:
-                continue
+        # 3. NEW: fuzzy similarity (key fix)
+        if len(f_can) > 15 and _similar(f_can, q) > 0.92:
+            continue
 
-        # 4) De-dupe within followups (exact canonical)
+        # 4. remove duplicates within followups
         if f_can in seen:
-            continue
-
-        # 5) De-dupe within followups (near-duplicate)
-        # small list, so O(n^2) is fine
-        if any(
-            _similar(f_can, _canon(prev)) >= similarity_threshold
-            for prev in cleaned
-            if len(f_can) >= min_len_for_fuzzy and len(_canon(prev)) >= min_len_for_fuzzy
-        ):
             continue
 
         cleaned.append(f.strip())
         seen.add(f_can)
-
-        if len(cleaned) >= max_items:
-            break
 
     return cleaned
 
@@ -349,6 +357,7 @@ async def ask(request: Request):
         answer = pick_rag_fallback(q)
 
    
-    
+    answer = format_answer_text(answer)
+
     followups = clean_followups(followups,q) if followups else None
     return respond(answer, retr_ms=retr_ms, llm_ms=llm_ms, followups=followups)
