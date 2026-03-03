@@ -1,6 +1,6 @@
 def get_conversion_nudge(question: str, answerable: bool) -> str:
     
-   if not answerable:
+    if not answerable:
         return (
             "I may not have this specific detail in my current sources. "
             "If you tell me what you’re deciding (fit, curriculum, projects, admissions), "
