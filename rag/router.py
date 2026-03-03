@@ -238,13 +238,7 @@ async def ask(request: Request):
 
         t_llm_start = time.time()
 
-        ret, followups, answerable = ask_llm(q, context_chunks)
-
-        if isinstance(ret, tuple) and len(ret) == 2:
-            answer, followups = ret
-        else:
-            answer, followups = ret, None
-
+        answer, followups, answerable = ask_llm(q, context_chunks)
         
     except Exception as e:
         path = "llm_error"
@@ -267,14 +261,6 @@ async def ask(request: Request):
     # 5) Final fallback
     if not (answer or "").strip():
         answer = pick_rag_fallback(q)
-
-    def followups_when_unanswerable(question: str) -> list[str]:
-    # Keep to 3 “known-covered” questions
-    return [
-        "What is the curriculum like?",
-        "What kind of projects will I work on?",
-        "What are the admission requirements?",
-    ]
 
     #answer = format_answer_text(answer)
     #followups = clean_followups(followups,q) if followups else None
