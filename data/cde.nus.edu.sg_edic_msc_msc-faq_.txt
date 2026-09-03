@@ -1,26 +1,30 @@
 Frequently Asked Questions
-Admission requirements
-What are the requirements for admission into the MSc in Engineering Design & Innovation programme?
-You can find all of the requirements for applying to this programme on this page.
-
-Can I be accepted into the MSc in Engineering Design & Innovation if my undergraduate degree is not in an Engineering discipline?
-This MSc programme accepts students with varied backgrounds. Your undergraduate degree is just one of the criteria that is considered. It is not necessary to have an undergraduate degree from an engineering discipline for acceptance into the programme.
-
 Can I apply if I am still an undergraduate at my current university?
 Individuals can apply if they are currently undergraduates. However, they must complete their undergraduate studies and produce a complete transcript by the time they are enrolled in the MSc programme. 
 
 Submission of application
 When does the MSc in Engineering Design & Innovation admit students?
-Starting from AY2024/2025, the MSc in Engineering Design & Innovation only admits students in the August semester instead of the January semester. 
+The MSc in Engineering Design & Innovation only admits students in the August semester. 
+
+
+How do I apply to the MSc EDI programme?
+The admission application system is GDA3: Application Management Portal (https://gradapp.nus.edu.sg/portal/app_manage). You may submit your application via the GDA3 portal.
+
 
 What documentation do I need to submit with my application?
 Applicants are required to submit all documentation that is marked as “required” during the application process. You are also encouraged to submit any documentation that strongly supports your case for admission, even if such documents are not in the “required” list.
 
 What is the application deadline for the MSc in Engineering Design & Innovation?
-The application period varies slightly from year to year. For the August intake, it typically begins in October of the preceding calendar year and concludes by February of of the following year.
+The application period varies slightly from year to year. Tt typically begins in October of the preceding calendar year and concludes by February of the following year.
 
 Can I apply to more than one MSc programme at NUS?
 Yes, applicants can apply to as many MSc programmes as they wish but they have to pay a separate application fee for each programme. 
+
+
+When can I receive the status of my application status outcome?
+Admissions is on a rolling basis. Hence application outcomes are sent out in batches, depending on when you have submitted your applications. 
+If you have any queries, please email directly to cdebox33@nus.edu.sg for enquiries.
+
 
 
 English language proficiency for admission
@@ -28,7 +32,7 @@ Do I need to submit an English proficiency result?
 Yes. All applicants whose first language is not English are required to demonstrate their English proficiency by means of either of the following tests:
 
 Test of English as a Foreign Language (TOEFL) with minimum score of 85 (Internet-based)
-International English Language Testing System (IELTS) with minimum Academic score of 6.0
+International English Language Testing System (IELTS) with minimum overall score of 6.0.
 Applicants may be waived from this requirement if they completed their degree programme taught entirely in English in one of the following countries: Australia, Canada, Hong Kong, India, New Zealand, Pakistan, Philippines, Singapore, United Kingdom, USA.
 
 Can I submit an alternative English proficiency result?
@@ -40,7 +44,14 @@ English proficiency results should be submitted at the time of application. If r
 Applicants should also note that the English proficiency results are valid for two years from the test date and should not have expired at point of application. Those who apply with expired scores will be rejected.
 
 Can I resubmit my English proficiency result if I improve it during the application process?
-Yes, English proficiency results can be re-submitted up until the end of the applicant evaluation period.
+Yes, English proficiency results can be re-submitted up until the end of the applicant evaluation period. You may upload your updated latest English proficiency certificates under “Other Document option” after your application submission under your application status page.
+
+Do I need to submit portfolio, recommendation or referee letters and how do I submit?
+A portfolio is typically not required. However, if you wish, you may attach your portfolio/recommendation/referee letters and upload under “Other Document option” in your application submission under your application status page.
+
+Do you interview candidates?
+We do not typically interview candidates.
+
 
 Acceptance of offer of admission
 How will I be notified if I am accepted into the MSc in Engineering Design & Innovation?
@@ -62,9 +73,6 @@ When do I need to arrive at NUS?
 Incoming students are expected to arrive at NUS in time for registration which occurs approximately two to three weeks before the start of semester. As the MSc in Engineering Design & Innovation programme currently only admits students in the August semester, incoming students are expected to arrive by mid-July. Late arrivals may be allowed on a case-to-case basis depending on the special circumstances of that specific case.
 
 Fees and financial assistance
-What are the fees for the MSc in Engineering Design & Innovation?
-The fees for this programme are listed on this page.
-
 When are the fees due?
 The application fee is due when the application is submitted, while the acceptance fee is due by the acceptance deadline if your application is successful.
 
@@ -81,9 +89,6 @@ No, the acceptance fee is non-refundable.
 
 Is the acceptance fee for the MSc in Engineering Design & Innovation transferable if I decide to accept offer of admission into another MSc programme in NUS?
 Yes, the acceptance fee for the MSc in Engineering Design & Innovation is fully transferable to another MSc programme offered by the College of Design and Engineering. However, only 50% of the acceptance fee is transferable to another MSc programme in NUS if it is not offered by the College of Design and Engineering.
-
-Are there government subsidies for Singaporean citizens and/or Permanent Residents?
-No, there are no government subsidies offered for the MSc in Engineering Design & Innovation.
 
 Does the MSc in Engineering Design & Innovation offer any financial assistance?
 Tuition fee rebates are offered to Singapore Citizens, Singapore Permanent Residents, and alumni of NUS. The rebate amount is intake-cohort based and the latest figures may be found on this webpage.
@@ -104,16 +109,14 @@ Students who are sponsored by their employers must provide a letter of confirmat
 Are students in the MSc in Engineering Design & Innovation provided a budget for prototyping work?
 Yes, students in this programme are provided a budget for consumables for the major design project course CDE5301. 
 
-
-
 Nature of MSc programme
 Can I do the MSc in Engineering Design & Innovation on a part-time basis?
 No, this MSc programme is currently offered as a full-time programme only.
 
 Does the MSc in Engineering Design & Innovation require a dissertation?
-This MSc programme does not require submission of a dissertation. However, students are expected to complete a major group project in the year-long design project course CDE5301. 
+This MSc programme does not require submission of a dissertation. However, students are expected to complete an interdisciplinary (major) group project in the year-long design project course CDE5301. 
 
-What are the requirements for the year-long major design project course?
+What are the requirements for the year-long design project course?
 For the major design project course CDE5301, students work in multidisciplinary teams on a major design project based on self-proposed problem statements or those provided by industry partners. The project allows students to apply what they have learned to a major design project. This capstone-like course tops off the programme via a major design project to give students the opportunity to integrate and practise the knowledge and skills learnt through various courses in the programme. 
 
 Classes and course registration
@@ -129,13 +132,7 @@ Is the class schedule flexible for working students?
 Classes are offered on a fixed schedule and generally no accommodation will be made for students who are working since the MSc in Engineering Design & Innovation is a full-time programme. Any accommodation will be up to the discretion of individual course lecturers.
 
 What happens if one of my desired electives is scheduled at the same time as a core course?
-The core courses are only offered once per year. As such, core courses would take precedent over elective courses if there is a schedule conflict. All efforts are made to minimise the number of schedule conflicts between core and elective courses but clashes may occasionally occur.
-
-Does the MSc in Engineering Design & Innovation require attendance during the Special Term?
-There are currently no core courses offered during the Special Term. Students are free to use the Special Term to work on their interdisciplinary design project CDE5301, take up internships, or pursue personal interests. 
-
-Are courses offered during the Special Term?
-No core or elective courses are currently offered during the Special Term.
+The core courses are generally only offered once per year. As such, core courses would take precedent over elective courses if there is a schedule conflict. All efforts are made to minimise the number of schedule conflicts between core and elective courses but clashes may occasionally occur.
 
 Internships and career support
 Can I take up an internship during the duration of the MSc programme?
@@ -150,4 +147,18 @@ NUS offers multiple resources to graduating students to help them secure future 
 
 What are the career paths for graduates of the Engineering Design & Innovation programme?
 Graduates from this MSc programme can embark on diverse careers that are related to product design and development, in particular organisations that focus on design and development of technology-based innovations. They may lead intrapreneurial activities within an organisation and/or be leading members of an entrepreneurial team. Examples of such organisations include start-up companies, innovation teams in multinational firms and government agencies, and venture builders.
+
+How difficult or challenging is the edi?
+The rigor or challenge or difficulty level of the MSc in Engineering Design & Innovation (EDI) lies in the depth of thinking, synthesis, and execution required to design solutions that are technically sound, human-centred, and viable in the real world.
+EDI’s rigor is integrative :
+Students must navigate uncertainty, define open-ended problems, and make informed trade-offs between desirability, feasibility, and viability.
+They must work across disciplines, requiring not only technical knowledge but also empathy, communication, and systems thinking.
+Projects are real and complex, involving stakeholders, prototyping, and iterative testing — all of which demand persistence, creativity, and reflection.
+EDI is rigorous in a broader, more contemporary sense, aligned with the realities of innovation today.
+
+What is the workload like in the EDI?
+Workload is computed on the basis of how many courses you enrol in each semester. 1 academic credit is equivalent to 2.5 hours of work per week. Hence each course of 4 credits equates to 10 hours of work/week. In general, if you are enrolled in 20 credits per semester, the workload is expected to be 50 hours per week. The interdisciplinary design project is a 6 credit per semester course and accordingly, the expected workload is 15 hours per week. 
+
+How do students cope in the programme?
+Many courses have team projects. Hence students are typically busy working in multidisciplinary team settings. The work may involve problem discovery, designing solutions, hands-on prototyping and testing. In class settings, students learn about innovations, product development and product-to-market discoveries. Students cope well as they are well supported by faculty consultations, and good technical support in studio and prototyping facilities. 
 

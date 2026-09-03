@@ -38,60 +38,23 @@ CDE5313 Innovation by Design
 This course serves as a foundation for those seeking to drive innovation initiatives by adopting design-driven approach, applying it to technology, business and system domains. It equips students with the innovation design and management capabilities needed to design and deliver innovation effectively within an organisation. Tailored for professionals ready to step into innovative roles, it develops the ability to leverage on design technology, to enable structures and culture to build essential competencies. Students will learn the importance of design thinking, systems thinking, user-centricity, market insights, organisational alignment, structuring and communications in designing for innovative outcomes.
 
 Elective Courses
-Students have flexibility to read elective courses which best suit their interest and aspirations, while at the same time ensuring they have sufficient exposure to a wide range of topics. Students must choose at least one course from each of the three baskets of electives (Design, Enterprise, and Technology).
+Elective courses are organized in 3 baskets : Design, Technology and Enterprise to give students the flexibility to read elective courses which best suit their interest and aspirations, while at the same time ensuring they have sufficient exposure to a wide range of topics. Students must choose at least one course from each of the three baskets of electives (Design, Enterprise, and Technology). Details of elective courses can be obtained from the MSc EDI website.
 
-Design
-Course code	Course title	Units	Semester in which course is usually offered
-BN5501	The Biodesign Process of Innovation in Healthcare	4	August and January
-CDE5311	Designing UX/UI for Human-Centred AI	4	August and January
-ID5352	Design Research Methods	4	August
-ID5354	Design Strategies and Leadership	4	January
-ID5355	Collaborative Design	4	January
-ID5360	Sustainable Innovation: Design & Transformation Strategies	4	August
-ID5361	Design for Healthy Living	4	August
-ID5951	Emerging Topics in Design	4	August
-IE5301	Human Factors in Engineering and Design	4	August
-NM5219	Critical Design	4	January
-CDE5399D	Engineering Design & Innovation Internship	4	August, January and Special Term
-Enterprise
-Course code	Course title	Units	Semester in which course is usually offered
-CDE5304 ^	Ideas to Market	4	January
-CDE5313 ^	Innovation by Design	4	August and January
-IE5003	Cost Analysis and Engineering Economy	4	January
-MT5001G	Intellectual Property Management & Innovation Strategy	4	August
-MT5012	Marketing of Technology Products in the Digital Era	4	August
-MT5022	Digital Disruption and Technology Strategy	4	January
-MT5023	Technology-Based Entrepreneurship Strategy	4	January
-MT5911	Venture Capital Funding for TechVenture	4	January
-MT5920	Enterprise Development	4	August and January
-CDE5399E	Engineering Design & Innovation Internship	4	August, January and Special Term
-^ Note: one of these courses can be read as an elective if the other is read as a core.
+Students also have the option to read up to 8 units of elective courses which are not currently listed in the three baskets above. 
+The elective courses which are outside the 3 baskets have to be relevant to the EDI programme and hence are subject to approval. 
+The workload for each course should be at least 4 units.
+The elective courses can only be requested during the appeal period of the Course Registration (CourseReg) exercise.
 
-Technology
-Course code	Course title	Units	Semester in which course is usually offered
-BN5208	Biomedical Quality and Regulatory Systems	4	August and January
-CDE5312	Beyond the Surface: Exploring Interactive Wearables	4	August and January
-CEG5204	Smart Sensing Systems	4	January
-CEG5205	AI Sensors and Virtual/Augmented Reality Technologies	4	August
-CEG5301	Machine Learning with Applications	4	August and January
-ESE5901	Environmental Technology	4	January
-ME5209	Energy Technologies and Systems	4	August
-ME5608	Additive & Non-Conventional Manufacturing Processes	4	August
-ME5612	Computer-Aided Product Development	4	January
-CDE5399T	Engineering Design & Innovation Internship	4	August, January and Special Term
-Students should check NUSMods for more information about the courses listed above and whether they are offered in the current academic year.
+
+CHOICE OF COURSES
+Core courses are allocated for all students. Elective courses are selected by students to define their learning experience and to suit their interest and aspirations. Elective courses can be registered during the course registration exercise at the start of each semester. 
+
 
 Internship course
-CDE5399D/E/T is an elective internship course for students who wish to spend one semester or the Special Term working on a full-time internship. These are the requirements for the internship course:
-
+CDE5399D/E/T is an elective internship course for students who wish to spend one semester or the Special Term working on a full-time internship. 
 The minimum duration of the internship must be 12 weeks, with a full-time workload in a pre-approved company in Singapore. Internships outside Singapore do NOT qualify. Students are expected to seek their own internship opportunities.
 The internship can only be credited once (either CDE5399D/E/T) and will be in lieu of one elective course in the respective elective basket. Students must still complete at least one non-internship course for each basket.
 The internship course will be assessed via 2 reports during the entire duration of the internship. The 1st report should be submitted around Week 6 of internship while the 2nd report to be submitted at the conclusion of the internship. The final grade will be either CS/CU (completed satisfactory or unsatisfactory).
 The internship can start anytime as long as it does not interfere with the full-time coursework during a semester.
 Each internship is subject to approval. Students must seek approval at least 4 weeks before the planned commencement of internship.
-Other elective courses
-Students have the option to read up to 8 units of elective courses which are not currently listed in the three baskets above. However, they should take note of the following considerations:
 
-The elective courses have to be relevant to this MSc EDI programme and hence are subject to approval. The elective courses have to contribute to substantial knowledge/skills in Design, Enterprise, or Technology.
-The workload for each course should be at least 4 units.
-The elective courses can only be requested during the appeal period of the Course Registration (CourseReg) exercise. This will be subject to approval by the host department of each course. The appeal period typically comes at the end of the CourseReg period i.e. Round 3 onwards.
