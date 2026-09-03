@@ -58,14 +58,14 @@ def generate_followups(question: str, context_chunks=None):
 
     if has("project", "projects", "hands-on"):
         return [
-            "What is the workload like in EDI?",
+            "What type of projects will I work on?",
             "What skills will I gain from these projects?",
             "What are the career outcomes after EDI?",
         ]
 
     if has("workload", "stress", "cope", "difficult"):
         return [
-            "What type of projects will I work on?",
+            "How challenging is the EDI programme?",
             "What support systems are available for students?",
             "What are the career outcomes after EDI?",
         ]
