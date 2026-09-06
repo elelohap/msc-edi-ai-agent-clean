@@ -127,7 +127,7 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, O
     """
     
     parts: List[str] = []
-    MAX_CHUNK_CHARS = 600
+    MAX_CHUNK_CHARS = 1200
     for c in context_chunks or []:
         t = _chunk_to_text(c).strip()
         if t and t.strip():
@@ -138,9 +138,9 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, O
     print(f"[LLMDBG] context_len={len(context_text)} parts={len(parts)}", flush=True)
 
     if not context_text.strip():
-        return "The answer is not in the provided documents."
-        followups = None
-        answerable = False
+        return "The answer is not in the provided documents.", None, False
+        # followups = None
+        # answerable = False
 
     user_prompt = f"""You must answer in well-formatted paragraphs.
     
@@ -148,6 +148,9 @@ def ask_llm(question: str, context_chunks: List[Dict[str, Any]]) -> Tuple[str, O
     - Use ONLY the information in the Context.
     - If the Context does not contain the answer, say: "The answer is not in the provided documents."
     - Do not guess and do not add facts not supported by the Context.
+    - When the Context contains an explicit date, deadline, fee, requirement, or other specific factual value relevant to the question, use that explicit value in the answer.
+    - Prefer specific current information over general statements.
+    - Do not say that specific information is unavailable if it is explicitly stated anywhere in the Context.
 
 
     Context:
